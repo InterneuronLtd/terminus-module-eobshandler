@@ -1,0 +1,44 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+  <app-gcs-neurologi  *ngIf="initComplete && appService.personId != '' && moduleContext == BadgeNames['GlasgowComaScale']"></app-gcs-neurologi>
+  <app-height-weight-waist  *ngIf="initComplete && appService.personId != '' && moduleContext == BadgeNames['heightWeightwaist']"></app-height-weight-waist>
+  <app-blood-glucose *ngIf="initComplete && appService.personId != '' && moduleContext == BadgeNames['BloodGlucose']"></app-blood-glucose>
+  <app-blood-pressure *ngIf="initComplete && appService.personId != '' && moduleContext == BadgeNames['PosturalBloodPressure']"></app-blood-pressure>
+  <app-observation-monitoring-frequency *ngIf="initComplete && appService.personId != '' && moduleContext == BadgeNames['NEWS2Monitoring']"></app-observation-monitoring-frequency>
+  <app-bristol-stool-chart *ngIf="initComplete && appService.personId != '' && moduleContext == BadgeNames['BristolStoolChart']"></app-bristol-stool-chart>
+  <app-food-and-fluid *ngIf="initComplete && appService.personId != '' && moduleContext == BadgeNames['FoodAndFluid']"></app-food-and-fluid>
+
+<div *ngIf="showReason" class="modal fade show" id="reasonModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabelDiscard" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered  modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h6 class="modal-title" id="exampleModalLabelDiscard">Reason</h6>
+                <button type="button" class="close" (click)="closeReasonTemplate()">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+              <p style="font-size: large; word-break: break-all;">{{reasonModalValue}}</p>
+            </div>
+        </div>
+    </div>
+</div>

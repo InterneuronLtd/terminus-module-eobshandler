@@ -1,0 +1,83 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div>
+    <hr>
+    <div class="row">
+        <div class="col-6">
+            <b> History</b>
+        </div>
+        <div class="col-6">
+            <!-- <input class="form-control pull-right" id="date-of-birth" name="date-of-birth" type="text"
+                placeholder="Select Date" style="width:160px" bsDatepicker autocomplete="off"> -->
+
+                <input class="form-control" id="date-of-birth" name="date-of-birth" type="text" placeholder="Select Date" 
+              bsDatepicker  [(ngModel)]="Choosenfilterdate" (ngModelChange)="ChoosenfilterdateChange($event)"
+              [bsConfig]="{showWeekNumbers:false, dateInputFormat: 'DD-MM-YYYY',containerClass:'theme-default' }"
+              autocomplete="off">
+        </div>
+    </div>
+    <br>
+    <table class="table table-borderless">
+        <tr *ngIf="listObsMonitoringFrequecy[0]?.componentCalled == 'blood_pressure'" style="background: #F0F4FF;">
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th colspan="2" style="text-align: center; padding-bottom: 0px;">Sitting/Lying</th>
+            <th colspan="2" style="text-align: center; padding-bottom: 0px;">Standing</th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+        </tr>
+        <tr *ngIf="listObsMonitoringFrequecy[0]?.componentCalled == 'gsc-neurologi'" style="background: #F0F4FF;">
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th colspan="6" style="text-align: center; padding-bottom: 0px; border-left: ridge;">Coma Scale</th>
+            <th colspan="4" style="text-align: center; padding-bottom: 0px; border-left: ridge;">Pupils</th>
+            <th colspan="4" style="text-align: center; padding-bottom: 0px; border-left: ridge; border-right: ridge;">Limbs</th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+            <th style="text-align: center; padding-bottom: 0px;"></th>
+        </tr>
+        <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+            <th *ngFor="let column of historyColumn">{{ column.fieldName }}</th>
+        </tr>
+
+        <tr *ngFor="let history of filterdata" [ngClass]="{'strickout': history.isdeleted}">
+            <td *ngFor="let column of historyColumn" style="text-align: left;">
+                <div *ngIf="column.id != 'action'" [ngClass]="{'tooltip-history': column.id == 'reason' || column.id == 'additionalcomments'}">
+                    <span *ngIf="column.id != 'datestarted' && column.id != 'reason' && column.id != 'additionalcomments'">{{ history[column.id] }}</span>
+                    <span *ngIf="column.id == 'datestarted'">{{ history[column.id] | date : 'dd-MM-YYYY HH:mm' }}</span>
+                    <a href="javascript:void(0)" *ngIf="column.id == 'reason' || column.id == 'additionalcomments'" (click)="showReasonAlert(history[column.id])">{{ history[column.id] }}</a>
+                </div>
+                <div *ngIf="column.id == 'action'">
+                    <img *ngIf="history.isamended == true && history.showHistory == true" style="width: 20px ; height: 20px;;" src="assets/images/history.svg" (click)="openHistoryModal(history)">
+                    <img *ngIf="history.isdeleted != true && history.showEdit == true" style="width: 30px ; height: 30px;;" src="assets/images/Edit _Button_Small.svg" (click)="openEditModal(history)">
+                </div>
+            </td>
+        </tr>
+
+
+    </table>
+
+
+
+</div>
+

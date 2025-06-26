@@ -1,0 +1,560 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content modal-lg">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Blood Glucose</h5> &nbsp; <img src="assets/images/Info.svg" height="25px"  (click)="ShowPlan = true;ShowPlanSection='All'"
+                    role="button" class="pl1"> &nbsp;<h5>{{currentRecordedFrequencyAndReason}}</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="showeModelditdiscardMethod('main')">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div *ngIf="!patientrefuse" class="col">
+                            <table>
+                                <tr>
+                                    <th *ngIf="!patientrefuse" style="padding: 0px 10px 18px 4px">Blood Glucose</th>
+                                    <th *ngIf="!patientrefuse"></th>
+                                    <th *ngIf="!patientrefuse" style="padding: 0px 10px 18px 10px">Recorded</th>
+
+                                </tr>
+                                <tr>
+                                    <th *ngIf="!patientrefuse"> <input type="text"  class="form-control"
+                                           (input)="inputCheck($event,'creat')" [(ngModel)]="bloodGlucose"
+                                           (change)="TrimTrailingDots($event)"
+                                            style="width:115px;" /></th>
+                                    <th *ngIf="!patientrefuse">mmol/L &nbsp; &nbsp;</th>
+                                    <th *ngIf="!patientrefuse" style="padding:  10px"> <select class="form-control"
+                                            [(ngModel)]='recordedAt' id="ddlrecordedat" placeholder="Select">
+                                            <option value="" disabled selected>Select </option>
+                                            <option value="Before Food">
+                                                Before Food</option>
+                                            <option value="After Food">
+                                                After Food</option>
+
+                                        </select></th>
+
+
+                                </tr>
+
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table>
+                                <tr>
+
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        Observation Time
+                                    </th>
+                                </tr>
+                                <tr>
+
+
+                                    <th>
+                                        <input class="form-control" id="date-of-birth" name="date-of-birth" type="text"
+                                            placeholder="Select Date" bsDatepicker [(ngModel)]="Choosenfilterdate"
+                                            (ngModelChange)="ChoosenfilterdateChange($event)"
+                                            [bsConfig]="{ showWeekNumbers:false, dateInputFormat: 'DD-MM-YYYY', containerClass:'theme-default' }"
+                                            [maxDate]="today" [minDate]="mindate" autocomplete="off">
+                                    </th>
+                                    <th>
+                                        <timepicker [minuteStep]="1" [(ngModel)]="Choosenfilterdate" [min]="minTime"
+                                            [max]="maxTime" [showMeridian]="false">
+                                        </timepicker>
+                                    </th>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="row" style="padding-left: 20px; padding-top: 20px;">
+                        <app-monitoring-frequency [observationtype]="observationtype"
+                            [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                            (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+
+                    </div>
+
+                    <div *ngIf="appService.AuthoriseAction('eobs_record _patient_refused_blood_glucose')">
+                        <label *ngIf="showpatientrefuselink" (click)="showpatientrefuselink=false"
+                            style="color: #007bff;">Patient Refused?</label><br />
+                        <div *ngIf="!showpatientrefuselink" class="form-check">
+                            <input [(ngModel)]="patientrefuse" (ngModelChange)="patientrefuseChange()" type="checkbox"
+                                class="form-check-input" id="chkpatientrefusedbg">
+                            <label class="form-check-label" for="chkpatientrefusedbg">Patient Refused</label>
+                        </div>
+
+                        <div *ngIf="patientrefuse">
+                            <br />
+                            <strong class="form-check-label">Reason for Refusal</strong> <span style="color:red;">
+                                *</span>
+                            <textarea class="form-control" row="5" maxlength="800"
+                                [(ngModel)]='reasonforRefusal'></textarea>
+
+
+                        </div>
+                    </div>
+                    <br />
+
+                    <hr>
+
+                    <img src="assets/images/Table_icon.svg" height="25px" (click)="ShowHistory=!ShowHistory"
+                        role="button" class="pl1">
+                    <img src="assets/images/Graph_icon.svg" height="25px" class="pl-3" (click)="openCollapseGraph()"
+                        role="button">
+
+                    <img *ngIf="!messageSuccess && appService.AuthoriseAction('eobs_add_blood_glucose')"
+                        (click)="SaveObsevation()" src="assets/images/Tick Primary.svg" height="32px" width="40px"
+                        class="float-right" role="button">
+                    <div *ngIf="messageSuccess" style="padding: 4px;" class="alert float-right alert-primary"
+                        role="alert">
+                        Observation Saved Successfully.
+                    </div>
+                    <div *ngIf="patientrefuseerror" style="padding: 4px;" class="alert float-right alert-danger"
+                        role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Please Enter Patient Refuse Reason.</span>
+                    </div>
+                    <div *ngIf="showError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">{{showErrormessage}}.</span>
+                    </div>
+                    <div *ngIf="recordedError" style="padding: 4px;" class="alert float-right alert-danger"
+                        role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Please Select Recorded.</span>
+                    </div>
+                    <div *ngIf="showValidate7DayError" style="padding: 4px;" class="alert float-right alert-danger"
+                        role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Monitoring frequency cannot be greater than 7 days</span>
+                    </div>
+                </div>
+                <div class="modal-body " *ngIf="ShowHistory">
+
+
+                    <div style="max-height: 250px; width: 100%; overflow-y: auto; white-space: nowrap;">
+
+                        <app-history-viewer [monitoringFrequencyHistoryData]="monitoringFrequencyHistoryData"
+                            [rowForHistoryViewer]="rowForHistoryViewer"
+                            (historyViewerOutput)="receivehistoryViewerData($event)"></app-history-viewer>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showEdit" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeledit" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" style=" max-height: calc(100% - 60px); overflow-y: auto;">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeledit">Edit Blood Glucose</h5>
+                <button type="button" class="close" (click)="showeModelditdiscardMethod('edit')">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tr>
+                        <td style="width:215px;">Observation Time:</td>
+                        <th style="padding: 10px">{{selectedbloodGlucose.datestarted | date: 'dd/MM/yyyy HH:mm'}}
+                        </th>
+                        <td></td>
+
+                    </tr>
+                    <tr *ngIf="!selectedbloodGlucose.patientrefused">
+                        <td>Blood Glucose:</td>
+
+                        <th style="padding: 10px"><input type="text" class="form-control"
+                                (input)="inputCheck($event,'edit')"                                             
+                                (change)="TrimTrailingDots($event)"
+                                [(ngModel)]="selectedbloodGlucose.__bloodglucose.value" /></th>
+                        <th>mmol/L </th>
+                    </tr>
+                    <tr *ngIf="!selectedbloodGlucose.patientrefused">
+                        <td>Recorded</td>
+                        <th style="padding: 10px"> <select class="form-control"
+                                [(ngModel)]='selectedbloodGlucose.__recorded.value' placeholder="Select"
+                                id="ddlrecordedat">
+                                <option value="" disabled selected>Select </option>
+                                <option value="Before Food">
+                                    Before Food</option>
+                                <option value="After Food">
+                                    After Food</option>
+
+                            </select></th>
+                        <td></td>
+
+                    </tr>
+
+                    <tr *ngIf="LatestRecordSelected">
+
+                        <td colspan="2">
+                            <app-monitoring-frequency [observationtype]="observationtype"
+                                [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                                (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+                        </td>
+                    </tr>
+
+                </table>
+                <div *ngIf="!selectedbloodGlucose.patientrefused">
+                    <br />
+                    <b>Reason for edit:</b>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="exampleRadios1" name='Reasonedit'
+                            value='Entered in error' [(ngModel)]='selectedbloodGlucose.reasonforamend' checked>
+                        <label class="form-check-label" for="exampleRadios1">
+                            Entered in error
+                        </label>
+                    </div>
+                    <br />
+                    <!-- <div class="form-check">
+                        <input class="form-check-input" type="radio" id="exampleRadios2" name='Reasonedit'
+                            value='Recorded for the wrong patient' [(ngModel)]='selectedbloodGlucose.reasonforamend'>
+                        <label class="form-check-label" for="exampleRadios2">
+                            Recorded for the wrong patient
+                        </label>
+                    </div> <br /> -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="exampleRadios3" name='Reasonedit' value='Other'
+                            [(ngModel)]='selectedbloodGlucose.reasonforamend'>
+                        <label class="form-check-label" for="exampleRadios3">
+                            Other
+                        </label>
+                    </div> <br />
+                    <textarea *ngIf="selectedbloodGlucose.reasonforamend  == 'Other'" class="form-control" row="4"
+                        maxlength="800" [(ngModel)]='OthereReason'></textarea>
+
+                </div>
+                <div *ngIf="appService.AuthoriseAction('eobs_record _patient_refused_blood_glucose')">
+                    <div class="form-check">
+                        <input [(ngModel)]="selectedbloodGlucose.patientrefused" type="checkbox"
+                            class="form-check-input" id="editchkpatientrefused">
+                        <label class="form-check-label" for="editchkpatientrefused">Patient Refused</label>
+                    </div>
+
+                    <div *ngIf="selectedbloodGlucose.patientrefused">
+                        <br />
+                        <strong class="form-check-label">Reason for Refusal</strong> <span style="color:red;">
+                            *</span>
+                        <textarea class="form-control" row="5" maxlength="800"
+                            [(ngModel)]='selectedbloodGlucose.reasonforpatientrefused'></textarea>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <img class="pull-left" style="width: 40px ; height: 30px;;"
+                    *ngIf="appService.AuthoriseAction('eobs_delete_blood_glucose')"
+                    (click)="showDelete=true;showEdit=false " src="assets/images/Delete.svg">
+
+                <img src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right"
+                    *ngIf="appService.AuthoriseAction('eobs_edit_blood_glucose')" (click)="saveEditorDelete('Edit')"
+                    role="button">
+                <div *ngIf="showEditRecordError" style="padding: 4px;" class="alert float-right alert-danger"
+                    role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                        class="text-danger">{{editRecordError}}</span>
+                </div>
+                <div *ngIf="showEditValidate7DayError" style="padding: 4px;" class="alert float-right alert-danger"
+                    role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                        class="text-danger">Monitoring frequency cannot be greater than 7 days</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div *ngIf="showDelete" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">Delete Confirmation</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to delete the Blood Glucose? <br /> Please provide
+                reason.<br />
+                <b>Reason:</b> <span style="color:red;"> *</span>
+                <!-- <select  >
+                <option [value]="Entered in error"> Entered in error</option>
+                <option [value]="Recorded for the wrong patient">Recorded for the wrong patient</option>
+            </select> -->
+                <select class="form-control" [(ngModel)]='selectedbloodGlucose.reasonforamend' placeholder="Select"
+                    id="ddlprescriptionindications">
+                    <option value="Entered in error">
+                        Entered in error</option>
+                    <option value="Recorded for the wrong patient">
+                        Recorded for the wrong patient</option>
+                    <option value="Other">
+                        Other</option>
+                </select>
+                <br />
+
+                <textarea *ngIf="selectedbloodGlucose.reasonforamend == 'Other'" class="form-control" row="4"
+                    maxlength="800" [(ngModel)]='OthereReason'></textarea>
+
+            </div>
+            <div class="modal-footer">
+                <div *ngIf="showEditRecordError" style="padding: 4px;" class="alert float-right alert-danger"
+                    role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                        class="text-danger">{{editRecordError}}</span>
+                </div>
+                <img style="width: 40px ; height: 30px;;" (click)="deleteobservation('Delete')"
+                    *ngIf="appService.AuthoriseAction('eobs_delete_blood_glucose')"
+                    src="assets/images/Tick Secondary.svg" class="float-right">
+                <img src="assets/images/Cross Primary.svg" (click)="DeleteCancelClick()" height="32px"
+                    width="40px" class="float-right" role="button">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showeditdiscard" class="modal fade show" id="Discardis" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabelDiscard" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabelDiscard">Discard Changes</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to close? All the unsaved<br /> data entered will be lost if you continue.
+
+
+
+            </div>
+            <div class="modal-footer">
+
+                <div>
+                    <img style="width: 40px ; height: 30px;;" (click)="showeditdiscard=false;showEdit=false"
+                        src="assets/images/Tick Secondary.svg" class="float-right">
+                </div>
+                <img src="assets/images/Cross Primary.svg" (click)="showeditdiscard=false;showEdit=true" height="32px"
+                    width="40px" class="float-right" role="button">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="showeModelditdiscard" class="modal fade show" id="Discardismodel" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabelDiscardmodel" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabelDiscardmodel">Discard Changes</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to close? All the unsaved<br /> data entered will be lost if you continue.
+
+
+
+            </div>
+            <div class="modal-footer">
+
+                <div >
+                    <img style="width: 40px ; height: 30px;;"
+                        (click)="showeModelditdiscard=false;closeBloodGlucoseModal()"
+                        src="assets/images/Tick Secondary.svg" class="float-right">
+                </div>
+                <img src="assets/images/Cross Primary.svg" (click)="showeModelditdiscard=false" height="32px"
+                    width="40px" class="float-right" role="button">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="showEditHistory" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">History</h5>
+                <button type="button" class="close" (click)="showEditHistory=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 300px;overflow-y: auto;">
+
+                <table class="table table-borderless">
+
+                    <tr style="background: #F0F4FF;text-align: center;">
+                        <th>mmol/L</th>
+                        <th>Monitoring Frequency</th>
+                        <th>Reason</th>
+                        <th>Recorded</th>
+
+                        <th>Date/Time</th>
+                        <th>Amended By</th>
+                        <th>Reason for Edit/Delete</th>
+                        <th>Reason for Refusal</th>
+                    </tr>
+                    <tr *ngFor="let Record of RecordHistory">
+
+                        <td style="text-align: center;">{{Record.mmol}}</td>
+                        <td style="text-align: center;" *ngIf="!Record.isstop">{{Record.frequency_entered}} {{Record.frequencyunit_entered}}
+                        </td>
+                        <td style="text-align: center;" *ngIf="Record.isstop">Monitoring Stopped</td>
+                        <td style="text-align: center;"  *ngIf="Record.frequency_reason != 'Other'">{{Record.frequency_reason}}</td>
+                        <td style="text-align: center;"  *ngIf="Record.frequency_reason == 'Other'">
+                        
+                            <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                    (click)="showReasonAlert(Record.frequency_reason_other)">{{Record.frequency_reason_other}}</a>
+                            </div>
+                        
+                        </td>
+                        <td style="text-align: center;" *ngIf="!Record.patientrefused">{{Record.value}}</td>
+                        <td style="text-align: center;" *ngIf="Record.patientrefused">Patient Refused</td>
+
+                        <td style="text-align: center;"> {{Record._createddate | date: 'dd/MM/yyyy HH:mm'}}</td>
+
+                        <td *ngIf="Record.isamended && !Record.isdeleted" style="text-align: center;"> Edited by
+                            {{Record.addedby}}</td>
+                        <td *ngIf="Record.isamended && Record.isdeleted" style="text-align: center;"> Deleted by
+                            {{Record.addedby}}</td>
+                        <td *ngIf="!Record.isamended && !Record.isdeleted" style="text-align: center;">Added by
+                            {{Record.addedby}}</td>
+                        <td style="text-align: center;">{{Record.reson}}</td>
+                        
+                        <td style="text-align: center;">
+                            <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                    (click)="showReasonAlert(Record.reasonforpatientrefused)">{{Record.reasonforpatientrefused}}</a>
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<div *ngIf="Showchart" class="modal fade show" id="Discardis" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabelDiscard" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered  modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabelDiscard">Blood Glucose Graph</h5>
+                <button type="button" class="close" (click)="Showchart=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto;">
+                <app-chart [chartData]="monitoringFrequencyHistoryData" [chartConfig]="chartConfig"></app-chart>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div *ngIf="ShowPlan" class="modal fade show" id="Discardis" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabelDiscard" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered " role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabelDiscard">Plan for low blood sugar</h5>
+                <button type="button" class="close" (click)="ShowPlan = false;;ShowPlanSection='All'">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto;">
+                <table class="table table-bordered text-start align-middle">
+                    <tbody>
+                      <tr *ngIf="ShowPlanSection == 'All' || ShowPlanSection == 'first'">
+                        <th scope="row" class="w-25">4 or above</th>
+                        <td>
+                            <ul class="mb-0">
+                                <li> Continue routine monitoring</li>                             
+                              </ul>
+                           
+                        </td>
+                      </tr>
+                      <tr *ngIf="ShowPlanSection == 'All' || ShowPlanSection == 'second'">
+                        <th  style="background-color: #72be95;" scope="row">3 to 3.9</th>
+                        <td>
+                          <ul class="mb-0">
+                            <li>Offer 150 mls of Milk or Fruit Juice</li>
+                            <li>Repeat BMs in 30 minutes</li>
+                          </ul>
+                        </td>
+                      </tr>
+                      <tr *ngIf="ShowPlanSection == 'All' || ShowPlanSection == 'third'">
+                        <th style="background-color: #fff0b0;" scope="row">2 to 2.9</th>
+                        <td>
+                          <ul class="mb-0">
+                            <li>Inform Duty Doctor</li>
+                            <li>Offer 150 mls of Milk or Fruit Juice then</li>
+                            <li>Repeat BMs every 15 minutes until above 4</li>
+                          </ul>
+                        </td>
+                      </tr>
+                      <tr *ngIf="ShowPlanSection == 'All' || ShowPlanSection == 'fourth'">
+                        <th  style="background-color: #ff9681;" scope="row">Less than 2</th>
+                        <td>
+                          <ul class="mb-0">
+                            <li>Emergency bleep duty Doctor and assess ACVPU</li>
+                            <li>Administer oral glucogel, then 150 mls of milk or fruit juice</li>
+                            <li>If drowsy or unresponsive, prepare equipment for IV access, administer 1mg IM Glucagon</li>
+                            <li>Repeat BMs every 15 minutes until above 4</li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+            </div>
+        </div>
+    </div>
+</div>

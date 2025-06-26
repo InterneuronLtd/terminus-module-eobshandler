@@ -1,0 +1,134 @@
+{
+    "uris": {
+      "baseuri": "SYNAPSE_DYNAMIC_URI"
+    },
+    "AppSettings":{
+      "enableRBAC": true
+    },
+    "ObservationMonitoringFrequency" : {
+      "defaultMonitoringFrequencyValue": 12,
+      "defaultMonitoringFrequencyUnit": "hours",
+      "defaultMonitoringPEWSFrequencyValue": 12,
+      "defaultMonitoringPEWSFrequencyUnit": "hours",
+      "defaultMonitoringMEWSFrequencyValue": 12,
+      "defaultMonitoringMEWSFrequencyUnit": "hours",
+      "defaultMonitoringMARSIFrequencyValue": 12,
+      "defaultMonitoringMARSIFrequencyUnit": "hours"
+    },
+    "FoodItemDropdownValues": [
+        { "id": "Nil", "name": "Nil" },
+        { "id": "1/4", "name": "1/4" },
+        { "id": "1/2", "name": "1/2" },
+        { "id": "3/4", "name": "3/4" },
+        { "id": "All", "name": "All" }
+    ],
+    "PassedUrineDropdownValues": [
+        { "id": "", "name": "Please Select" },
+        { "id": "Yes", "name": "Yes" },
+        { "id": "No", "name": "No" },
+        { "id": "Unknown", "name": "Unknown" }
+    ],
+    "RecordingReminderDropdownValues": [
+        { "id": "", "name": "Please Select" },
+        { "id": "minutes", "name": "minutes" },
+        { "id": "hours", "name": "hours" },
+        { "id": "days", "name": "days" }
+    ],
+    "ReasonDropdownValues":[
+        { "id": "", "name": "Please Select", "for": "Time, StopMonitoring" },
+        { "id": "Low weight / Underweight", "name": "Low weight / Underweight", "for": "Time" },
+        { "id": "Unplanned weight loss", "name": "Unplanned weight loss", "for": "Time" },
+        { "id": "Poor appetite / Poor eating and / Or drinking", "name": "Poor appetite / Poor eating and / Or drinking", "for": "Time" },
+        { "id": "Eats a limited array of foods", "name": "Eats a limited array of foods", "for": "Time" },
+        { "id": "Risk of dehydration", "name": "Risk of dehydration", "for": "Time" },
+        { "id": "Risk of refeeding syndrome", "name": "Risk of refeeding syndrome", "for": "Time" },
+        { "id": "Poorly controlled blood sugars", "name": "Poorly controlled blood sugars", "for": "Time" },
+        { "id": "Monitoring not clinically indicated", "name": "Monitoring not clinically indicated", "for": "StopMonitoring" },
+        { "id": "Acute hospital ED", "name": "Acute hospital ED", "for": "StopMonitoring" },
+        { "id": "Extended leave", "name": "Extended leave", "for": "StopMonitoring" },
+        { "id": "AWOL", "name": "AWOL", "for": "StopMonitoring" },
+        { "id": "Other", "name": "Other", "for": "Time, StopMonitoring" }
+    ],
+    "ReasonForDeleteDropdownValues":[
+        { "id": "EnteredInError", "name": "Entered in error" },
+        { "id": "RecordedForTheWrongPatient", "name": "Recorded for the wrong patient" },
+        { "id": "Other", "name": "Other" }
+    ],
+    "StartTime": 7,
+    "HistoryColumns": [
+        {
+            "id": "datestarted",
+            "fieldName": "Observation Time"
+        },
+        {
+          "id": "foodtakenhtml",
+          "fieldName": "Food Taken"
+        },
+        {
+            "id": "fluidtakenhtml",
+            "fieldName": "Fluid Taken"
+        },
+        {
+          "id": "passedurine",
+          "fieldName": "Passed Urine"
+        },
+        {
+          "id": "fluidItemConsumedValue",
+          "fieldName": "Fluid Daily Running Total"
+        },
+        {
+          "id": "recordingreminder",
+          "fieldName": "Monitoring Frequency"
+        },
+        {
+            "id": "frequencyreason",
+            "fieldName": "Reason"
+        },
+        {
+            "id": "lastmodifiedon",
+            "fieldName": "Recorded Date/Time"
+        },
+        {
+          "id": "lastmodifiedby",
+          "fieldName": "Recorded by"
+        },
+        {
+            "id": "action",
+            "fieldName": ""
+        }
+    ],
+    "FoodAndFluidPleaseSelectDrpValues":[
+      {"id":"", "name": "Please Select"}
+    ],
+    "FoodAndFluidMinutesDrpValues":[
+      {"id":"", "name": "Please Select"},
+      {"id":"5", "name": "5"},
+      {"id":"10", "name": "10"},
+      {"id":"15", "name": "15"},
+      {"id":"30", "name": "30"},
+      {"id":"60", "name": "60"}
+    ],
+    "FoodAndFluidHoursDrpValues":[
+      {"id":"", "name": "Please Select"},
+      {"id":"1", "name": "1"},
+      {"id":"2", "name": "2"},
+      {"id":"4", "name": "4"},
+      {"id":"6", "name": "6"},
+      {"id":"8", "name": "8"},
+      {"id":"12", "name": "12"},
+      {"id":"24", "name": "24"}
+    ],
+    "FoodAndFluidDaysDrpValues":[
+      {"id":"", "name": "Please Select"},
+      {"id":"1", "name":"1"},
+      {"id":"2", "name":"2"},
+      {"id":"3", "name":"3"},
+      {"id":"4", "name":"4"},
+      {"id":"5", "name":"5"},
+      {"id":"6", "name":"6"},
+      {"id":"7", "name":"7"}
+    ],
+    "FoodAndFluidDefaultFrequency": "12",
+    "FoodAndFluidDefaultFrequencyUnit": "hours",
+    "pewsAgeThreshold": 18 
+}

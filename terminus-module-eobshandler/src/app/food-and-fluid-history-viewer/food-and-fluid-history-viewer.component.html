@@ -1,0 +1,178 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div *ngIf="filterdata.length > 0">
+    <hr>
+    <div class="row">
+        <div class="col-9">
+            <b>History</b>
+        </div>
+        <div class="col-3">
+            <input type="text" class="form-control" id="filter-date" name="filter-date" placeholder="Select Date"
+                bsDatepicker [(ngModel)]="Choosenfilterdate" (ngModelChange)="ChoosenfilterdateChange($event)"
+                [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY', containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers: false }"
+                autocomplete="off">
+        </div>
+    </div>
+    <br>
+    <div class="table-responsive-lg table-responsive-md">
+        <table class="table table-borderless">
+            <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                <th *ngFor="let column of historyColumns">{{ column.fieldName }}</th>
+            </tr>
+            <tr *ngFor="let history of filterdata; let i = index"
+                [ngClass]="{'strikeout': history._recordstatus == 2 ? true : false}">
+                <td *ngFor="let column of historyColumns" style="text-align: left;">
+                    <div *ngIf="column.id != 'action'" [ngClass]="{'tooltip-history': column.id == 'frequencyreason'}">
+                        <span *ngIf="column.id == 'foodtakenhtml'">
+                            <ul style="list-style-type: none; padding: 0; margin: 0;">
+                                <li *ngFor="let item of history[column.id]">{{ item }}</li>
+                            </ul>
+                        </span>
+                        <span *ngIf="column.id == 'fluidtakenhtml'">
+                            <ul style="list-style-type: none; padding: 0; margin: 0;">
+                                <li *ngFor="let item of history[column.id]">{{ item }}</li>
+                            </ul>
+                        </span>
+                        <span *ngIf="column.id == 'recordingreminder' && history[column.id] == ''">
+                            Monitoring Stopped
+                        </span>
+                        <span *ngIf="column.id == 'frequencyreason' && history[column.id] != 'Other'" title="{{ history['frequencyreason'] }}">
+                            <a href="javascript:void(0)" (click)="showReasonAlert(history['frequencyreason'])">{{ history['frequencyreason'] }}</a>
+                        </span>
+                        <span *ngIf="column.id == 'frequencyreason' && history[column.id] == 'Other'" title="{{ history['frequencyreason'] }} - {{ history['frequencyreasonother'] }}">
+                            <a href="javascript:void(0)" (click)="showReasonAlert(history['frequencyreason'] + ' - ' + history['frequencyreasonother'])">{{ history['frequencyreason'] }} - {{ history['frequencyreasonother'] }}</a>
+                        </span>
+                        <span *ngIf="column.id != 'datestarted' && column.id != 'lastmodifiedon' && column.id != 'foodtakenhtml' && column.id != 'fluidtakenhtml' 
+                                && column.id != 'fluidItemConsumedValue' && column.id != 'frequencyreason'" title="{{history[column.id]}}">
+                            {{ history[column.id] }}
+                        </span>
+                        <span *ngIf="column.id == 'datestarted' || column.id == 'lastmodifiedon'">{{ history[column.id] | date : 'dd/MM/YYYY HH:mm' }}</span>
+                        <span *ngIf="column.id == 'fluidItemConsumedValue'">{{ runningTotals[i]?.currentRunningTotal }} ml</span>
+                    </div>
+                    <div *ngIf="column.id == 'action'">
+                        <img *ngIf="history.isedited == true" style="width: 20px;height: 20px; margin-right: 10px;" src="assets/images/history.svg" (click)="openHistoryModal(history)">
+                        <img *ngIf="history._recordstatus == 1 && appService.AuthoriseAction('eobs_amend_foodandfluid')" style="height: 25px;" src="assets/images/Edit _Button_Small.svg" (click)="editFoodAndFluidObservation(history)">
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+</div>
+<div *ngIf="filterdata.length == 0">
+    <div>
+        <b>No history data available</b>
+    </div>
+</div>
+
+<div class="modal fade" id="historyModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="historyLabel">History</h5>
+                <button type="button" class="close" aria-label="Close" (click)="hideHistoryModal()">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div style="min-height: 250px; width: 100%; overflow-x: auto; white-space: nowrap;">
+                <div class="modal-body">
+                    <div class="table-responsive-lg table-responsive-md" *ngIf="data.length > 0">
+                        <table class="table table-borderless">
+                            <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                                <th>Food Taken</th>
+                                <th>Fluid Taken</th>
+                                <th>Passed Urine</th>
+                                <th>Fluid Daily Running Total</th>
+                                <th>Monitoring Frequency</th>
+                                <th>Reason</th>
+                                <th>Reason for Edit / Delete</th>
+                                <!-- <th>Reason for Delete</th> -->
+                                <th>Date/Time</th>
+                                <th>Amended by</th>
+                            </tr>
+                            <tr *ngFor="let history of data; let i = index">
+                                <td style="text-align: left;">
+                                    <div>
+                                        <span>
+                                            <ul style="list-style-type: none; padding: 0; margin: 0;">
+                                                <li *ngFor="let item of history['foodtakenhtml']">{{ item }}</li>
+                                            </ul>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td style="text-align: left;">
+                                    <span>
+                                        <ul style="list-style-type: none; padding: 0; margin: 0;">
+                                            <li *ngFor="let item of history['fluidtakenhtml']">{{ item }}</li>
+                                        </ul>
+                                    </span>
+                                </td>
+                                <td style="text-align: left;">
+                                    <span>{{ history['passedurine']}}</span>
+                                </td>
+                                <td style="text-align: left;">
+                                    <span> {{ getObservationFluidTotals()[i] }} ml</span>
+                                </td>
+                                <td style="text-align: left;">
+                                    <span>{{history['recordingreminder']}}</span>
+                                </td>
+                                <td style="text-align: left;">
+                                    <span>{{history['frequencyreason']}}</span>
+                                </td>
+                                <td style="text-align: left;">
+                                    <div class="tooltip-history" 
+                                        title="{{ 
+                                            history['reasonfordelete'] == '' 
+                                            ? history['reasonforedit'] == 'EnteredInError' ? 'Entered in error' : 
+                                                history['reasonforedit'] == 'Other' ? 'Other - ' + history['reasonforeditother'] : ''
+                                            : history['reasonfordelete'] == 'EnteredInError' ? 'Entered in error' : 
+                                                history['reasonfordelete'] == 'Other' ? 'Other - ' + history['reasonfordeleteother'] : 'Recorded for the wrong patient' }}">
+                                        <a href="javascript:void(0)" *ngIf="history['reasonfordelete'] == '' && history['reasonforedit'] == 'Other'" (click)="showReasonAlert('Other - ' + history['reasonforeditother'])">Other - {{ history['reasonforeditother'] }}</a>
+                                        <a href="javascript:void(0)" *ngIf="history['reasonfordelete'] == 'Other'" (click)="showReasonAlert('Other - ' + history['reasonfordeleteother'])">Other - {{ history['reasonfordeleteother'] }}</a>
+                                        <span *ngIf="history['reasonfordelete'] == '' && history['reasonforedit'] == 'EnteredInError'">Entered in error</span>
+                                        <span *ngIf="history['reasonfordelete'] == 'EnteredInError'">Entered in error</span>
+                                        <span *ngIf="history['reasonfordelete'] == 'RecordedForTheWrongPatient'">Recorded for the wrong patient</span>
+                                    </div>
+                                </td>
+                                <!-- <td style="text-align: left;">
+                                    <div class="tooltip-history" 
+                                        title="{{ history['reasonfordelete'] == 'EnteredInError' ? 'Entered in error' : history['reasonfordelete'] == 'Other' ? 'Other - ' + history['reasonfordeleteother'] : 'Recorded for the wrong patient' }}">
+                                        <a href="javascript:void(0)" *ngIf="history['reasonfordelete'] == 'Other'" (click)="showReasonAlert('Other - ' + history['reasonfordeleteother'])">Other - {{ history['reasonfordeleteother'] }}</a>
+                                        <span *ngIf="history['reasonfordelete'] == 'EnteredInError'">Entered in error</span>
+                                        <span *ngIf="history['reasonfordelete'] == 'RecordedForTheWrongPatient'">Recorded for the wrong patient</span>
+                                    </div>
+                                </td> -->
+                                <td style="text-align: left;">
+                                    <span>{{history['lastmodifiedon'] | date : 'dd/MM/YYYY HH:mm'}}</span>
+                                </td>
+                                <td style="text-align: left;">
+                                    <span>{{ history['reasonforedit'] == '' && history['reasonfordelete'] == '' ? 'Added by ' + history['lastmodifiedby'] : history['reasonfordelete'] == '' ? 'Edited by ' + history['lastmodifiedby'] : 'Deleted by ' + history['lastmodifiedby'] }}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

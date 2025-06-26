@@ -1,1 +1,0 @@
-# terminus-module-eobshandler

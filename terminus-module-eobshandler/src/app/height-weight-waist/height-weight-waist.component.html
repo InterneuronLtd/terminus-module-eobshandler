@@ -1,0 +1,633 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Height, Weight & Waist circumference   {{currentRecordedFrequencyAndReason}}</h5>  
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="CloseModuel()">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+                    <div class="row">
+                        <div  *ngIf="!patientrefuse" class="col">
+                            <table>
+                                <tr class="previousvalue">
+                                    <td>Height {{latestHeightRecordedDate ? (latestHeightRecordedDate | date:'dd/MM/yyyy') : ''}}</td>
+                                    <td></td>
+                                    <td>Weight {{latestWeightRecordedDate ? (latestWeightRecordedDate | date:'dd/MM/yyyy') : ''}}</td>
+                                    <td></td>
+                                    <td>Waist circumference {{latestWaistRecordedDate ? (latestWaistRecordedDate | date:'dd/MM/yyyy') : ''}}</td>
+                                    <td></td>
+
+                                </tr>
+                                <tr class="previousvalue">
+                                    <td> <span *ngIf=" previousMegerments && previousMegerments.height"><b>{{previousMegerments.height}} cm</b></span></td>
+                                    <td></td>
+                                    <td><span *ngIf="previousMegerments &&  previousMegerments.weight"><b>{{previousMegerments.weight}} kg</b></span></td>
+                                    <td></td>
+                                    <td><span *ngIf="previousMegerments && previousMegerments.waistcircumferance"><b>{{previousMegerments.waistcircumferance}} cm</b></span></td>
+                                    <td></td>
+
+                                </tr>
+                                <br>
+                                <tr>
+                                    <th>&nbsp;Height</th>
+                                    <td></td>
+                                    <th>&nbsp;Weight</th>
+                                    <td></td>
+                                    <th>&nbsp;Waist circumference</th>
+                                    <td></td>
+
+                                </tr>
+                                <tr>
+                                    <th> 
+                                        <div class="d-flex align-items-center" style="gap: 5px;">
+                                            <input type="number" min="1" class="form-control" style="width: 100px;" (input)="inputCheckheight($event)" [(ngModel)]="height" />
+                                            <span>cm</span>
+                                        </div>
+                                    </th>
+                                    <th></th>
+                                    <th> 
+                                        <div class="d-flex align-items-center" style="gap: 5px;">
+                                             <input type="number" min="1" class="form-control" style="width:100px;  margin-left: 5px;"  (input)="inputCheckweight($event)" [(ngModel)]="weight" />
+                                            <span>kg</span>
+                                        </div>
+                                    </th>
+                                    <th></th>
+                                    <th> 
+                                        <div class="d-flex align-items-center" style="gap: 5px;">
+                                             <input type="number" min="1" class="form-control" style="width:170px; margin-left: 5px;" (input)="inputCheckWaistcircumferance($event)" [(ngModel)]="waistcircumferance"/>
+                                            <span>cm</span>
+                                        </div>
+                                    </th>
+                                    <th></th>
+
+
+
+                                </tr>
+                                <br>
+                                <tr>
+                                    <td>BMI </td>
+                                    <td></td>
+                                    <td>Waist to Height Ratio</td>
+                                    <td></td>
+                                    <th></th>
+                                    <td></td>
+
+                                </tr>
+                                <tr>
+                                    <td *ngIf="bmi" class="font-italic pt-1" style="font-size: 16px;"> <span><b>{{ bmi + ' (kg/m2)'}}</b> </span></td>
+                                    <td *ngIf="!bmi" class="font-italic pt-1" style="font-size: 16px;"> <span><b>Requires height and weight</b></span></td>
+                                    <td></td>
+                                    <td *ngIf="waistToHeight" class="font-italic pt-1" style="font-size: 16px;"><b>{{waistToHeight}}</b></td>
+                                    <td *ngIf="!waistToHeight" class="font-italic pt-1" style="font-size: 16px;"><b>Requires waist circumference and height</b></td>
+                                    <td></td>
+                                    <th></th>
+                                    <td></td>
+
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Observation Time:</th>
+                                </tr>
+                                <br>
+                                <tr>
+                                    <th>
+                                        <input class="form-control" id="date-of-birth" name="date-of-birth" type="text"
+                                            placeholder="Select Date" bsDatepicker [(ngModel)]="Choosenfilterdate"
+                                            (ngModelChange)="ChoosenfilterdateChange($event)"
+                                            [bsConfig]="{ showWeekNumbers:false, dateInputFormat: 'DD-MM-YYYY', containerClass:'theme-default' }"
+                                            [maxDate]="today" [minDate]="mindate" autocomplete="off">
+                                    </th>
+                                    <th>
+                                        <timepicker [minuteStep]="1" [(ngModel)]="Choosenfilterdate" [min]="minTime"
+                                            [max]="maxTime" [showMeridian]="false">
+                                        </timepicker>
+                                    </th>
+                                </tr>
+
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding-left: 20px; padding-top: 20px;">
+                        <app-monitoring-frequency [observationtype]="observationtype"
+                            [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                            (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+
+                    </div>
+
+                    <div *ngIf="appService.AuthoriseAction('eobs_patient_refused_height_weight_circumference')">
+                        <label *ngIf="showpatientrefuselink" (click)="showpatientrefuselink=false"
+                            style="color: #007bff;">Patient Refused?</label><br />
+                        <div *ngIf="!showpatientrefuselink" class="form-check">
+                            <input [(ngModel)]="patientrefuse" (ngModelChange)="patientrefuseChange()" type="checkbox"
+                                class="form-check-input" id="chkpatientrefusedbg">
+                            <label class="form-check-label" for="chkpatientrefusedbg">Patient Refused</label>
+                        </div>
+
+                        <div *ngIf="patientrefuse">
+                            <br />
+                            <strong class="form-check-label">Reason for Refusal</strong> <span style="color:red;">
+                                *</span>
+                            <textarea class="form-control" row="5" maxlength="800"
+                                [(ngModel)]='reasonforRefusal'></textarea>
+
+
+                        </div>
+                    </div>
+                    <br />
+
+                    <hr>
+                    <img src="assets/images/Table_icon.svg" height="25px" (click)="ShowHistory=!ShowHistory"
+                        role="button" class="pl1">
+                    <img src="assets/images/Graph_icon.svg" height="25px" class="pl-3" role="button" (click)="showGraph=true">
+
+                    <img *ngIf="!messageSuccess && appService.AuthoriseAction('eobs_add_height_weight_circumference')"  (click)="saveObservation()"
+                        src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right " 
+                        role="button">
+                    <div *ngIf="messageSuccess" style="padding: 4px;" class="alert float-right alert-primary"
+                        role="alert">
+                        Observation Saved Successfully.
+                    </div>
+                    <div *ngIf="showError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">{{showErrormessage}}.</span>
+                    </div>
+                </div>
+                <div class="modal-body " *ngIf="ShowHistory">
+
+                    <div style=" width: 100%;  white-space: nowrap;">
+
+                     
+                            <div style="max-height: 300px;overflow-y: auto;">
+                                <table class="table">
+                                    <tr style="background: #F0F4FF;">
+                                        <th>Observation Time</th>
+                                        <th>Height</th>
+                                        <th>Weight</th>
+                                        <th>Waist circumference</th>
+                                        <th>Patient Refused</th>
+                                        <th>BMI</th>
+                                        <th>Waist to Height Ratio</th>
+                                        <th>Monitoring frequency</th>
+                                        <th>Reason</th>
+                                        <th>Recorded Date/Time</th>
+                                        <th>Amended by</th>
+                                        <th>Reason for Refusal</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr *ngFor="let Record of measurementsdetailshistory" [ngClass]="{'strickout': Record.isdeleted}">
+                                        <td style="text-align: center;"> {{Record.observationtime | date: 'dd/MM/yyyy
+                                            HH:mm'}}</td>
+                                            <td  style="text-align: center;"  [ngClass]="{'previousvalue': Record._heightadded}">{{Record.height}} <span *ngIf="Record.height"> cm </span></td>
+                                            <td  style="text-align: center;" [ngClass]="{'previousvalue': Record._weightadded}">{{Record.weight}} <span *ngIf="Record.weight">kg</span></td>
+                                            <td  style="text-align: center;" [ngClass]="{'previousvalue': Record._waistadded}">{{Record.waistcircumferance}} <span *ngIf="Record.waistcircumferance">cm</span></td>
+                                            <td  style="text-align: center;" *ngIf="Record.patientrefused">Patient Refused</td>
+                                            <td  style="text-align: center;" *ngIf="!Record.patientrefused"></td>
+                                            <td  style="text-align: center;">{{Record.bmi}}  <span *ngIf="Record.bmi"> (kg/m2) </span> </td>
+                                            <td  style="text-align: center;">{{Record.waisttoheight}}</td>
+
+                                        <td *ngIf="!Record.isstopped">{{Record.frequency}} {{Record.frequencyunit}}</td>     <td *ngIf="Record.isstopped">Monitoring Stoped</td>
+                                            <td *ngIf="Record.frequencyreason != 'Other'">{{Record.frequencyreason}}</td>     <td *ngIf="Record.frequencyreason == 'Other'">{{Record.frequencyreasonother}}</td>
+                                            <td style="text-align: center;"> {{Record.createdon | date: 'dd/MM/yyyy HH:mm'}}</td>
+                                                <td  style="text-align: center;">{{Record.completedby}}</td>
+                                                <td  style="text-align: center;">{{Record.reasonforpatientrefused}}</td>
+                                                <td> <img *ngIf="Record.isamended == true" style="width: 20px ; height: 20px;;" src="assets/images/history.svg" (click)="receivehistoryViewerData(Record,'showHistory')">
+                                                    <img *ngIf="Record.isdeleted != true && RBACK_Edit" style="width: 30px ; height: 30px;;" src="assets/images/Edit _Button_Small.svg" (click)="receivehistoryViewerData(Record,'showEdit')">
+                                                </td>
+                                    </tr>
+                                </table>
+                            </div>
+                   
+                        </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div *ngIf="showEdit" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeledit" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content" style=" max-height: calc(100% - 60px); overflow-y: auto;">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeledit">Edit Height, Weight & Waist circumference</h5>
+                <button type="button" class="close" (click)="showEdit =false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col">
+                        <table>
+                            <tr>
+                                <th>Observation Time:</th>
+                                <td></td>
+                                <th>{{selectedObservation.observationtime | date: 'dd/MM/yyyy
+                                    HH:mm'}}</th>
+                                <td></td>
+                                <th></th>
+                                <td></td>
+
+                            </tr>  <br>
+                            <tr *ngIf="!selectedObservation.patientrefused">
+                                <th>Height</th>
+                                <td></td>
+                                <th>Weight</th>
+                                <td></td>
+                                <th>Waist circumference</th>
+                                <td></td>
+
+                            </tr>
+                            <tr *ngIf="!selectedObservation.patientrefused">
+                                <th> <input type="number" min="1" class="form-control" (input)="selectinputCheckheight($event)"  [(ngModel)]="selectedObservation.height"/></th>
+                                <th>cm</th>
+                                <th> <input type="number" min="1" class="form-control" (input)="selectinputCheckweight($event)" [(ngModel)]="selectedObservation.weight"/></th>
+                                <th>kg </th>
+                                <th> <input type="number" min="1" class="form-control" (input)="selectinputCheckWaistcircumferance($event)" [(ngModel)]="selectedObservation.waistcircumferance"/></th>
+                                <th>cm </th>
+
+                            </tr>
+                            <tr  *ngIf="!selectedObservation.patientrefused">
+                                <td>BMI </td>
+                                <td></td>
+                                <td>Waist to Height Ratio</td>
+                                <td></td>
+                                <th></th>
+                                <td></td>
+
+                            </tr>
+                            <tr  *ngIf="!selectedObservation.patientrefused">
+                                <td>{{selectedObservation.bmi}} (kg/m2)</td>
+                                <td></td>
+                                <td>{{selectedObservation.waisttoheight}}</td>
+                                <td></td>
+                                <th></th>
+                                <td></td>
+                            </tr>
+                            <br>
+                            <tr *ngIf="LatestRecordSelected">
+
+                                <td colspan="6">
+                                    <app-monitoring-frequency [observationtype]="observationtype"
+                                        [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                                        (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+                                </td>
+                            </tr>
+                        </table>
+                        <div *ngIf="!selectedObservation.patientrefused">
+                            <br />
+                            <b>Reason for edit:</b>
+        
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="exampleRadios1" name='Reasonedit'
+                                    value='Entered in error' [(ngModel)]='selectedObservation.reasonforchange' checked>
+                                <label class="form-check-label" for="exampleRadios1">
+                                    Entered in error
+                                </label>
+                            </div>
+                            <br />
+                            <!-- <div class="form-check">
+                                <input class="form-check-input" type="radio" id="exampleRadios2" name='Reasonedit'
+                                    value='Recorded for the wrong patient' [(ngModel)]='selectedObservation.reasonforamend'>
+                                <label class="form-check-label" for="exampleRadios2">
+                                    Recorded for the wrong patient
+                                </label>
+                            </div> <br /> -->
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" id="exampleRadios3" name='Reasonedit' value='Other'
+                                    [(ngModel)]='selectedObservation.reasonforchange'>
+                                <label class="form-check-label" for="exampleRadios3">
+                                    Other
+                                </label>
+                            </div> <br />
+                            <textarea *ngIf="selectedObservation.reasonforchange  == 'Other'" class="form-control" row="4"
+                                maxlength="800" [(ngModel)]='selectedObservation.reasonforchangeother'></textarea>
+        
+                        </div>
+                        <div >
+                            <div class="form-check" *ngIf="appService.AuthoriseAction('eobs_patient_refused_height_weight_circumference')">
+                                <input [(ngModel)]="selectedObservation.patientrefused" type="checkbox"
+                                    class="form-check-input" id="editchkpatientrefused">
+                                <label class="form-check-label" for="editchkpatientrefused">Patient Refused</label>
+                            </div>
+        
+                            <div *ngIf="selectedObservation.patientrefused && appService.AuthoriseAction('eobs_patient_refused_height_weight_circumference')">
+                                <br />
+                                <strong class="form-check-label">Reason for Refusal</strong> <span style="color:red;">
+                                    *</span>
+                                <textarea class="form-control" row="5" maxlength="800"
+                                    [(ngModel)]='selectedObservation.reasonforpatientrefused'></textarea>
+        
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <img class="pull-left" style="width: 40px ; height: 30px;;" *ngIf="appService.AuthoriseAction('eobs_delete_height_weight_circumference')"
+                   
+                    (click)="showDelete=true;showEdit=false " src="assets/images/Delete.svg">
+
+                <img src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right" (click)="saveEditObservation()"
+                
+                    role="button">
+                    <div *ngIf="editshowError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">{{editshowErrormessage}}.</span>
+                    </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="showDelete" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">Delete Confirmation</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to delete the<br /> Height, Weight & Waist circumference? Please provide
+                reason.<br />
+                <b>Reason:</b> <span style="color:red;"> *</span>
+                <!-- <select  >
+                <option [value]="Entered in error"> Entered in error</option>
+                <option [value]="Recorded for the wrong patient">Recorded for the wrong patient</option>
+            </select> -->
+                <select class="form-control" [(ngModel)]='selectedObservation.reasonforchange' placeholder="Select"
+                    id="ddlprescriptionindications">
+                    <option value="Entered in error">
+                        Entered in error</option>
+                    <option value="Recorded for the wrong patient">
+                        Recorded for the wrong patient</option>
+                    <option value="Other">
+                        Other</option>
+                </select>
+                <br />
+
+                <textarea *ngIf="selectedObservation.reasonforchange == 'Other'" class="form-control" row="4"
+                    maxlength="800" [(ngModel)]='selectedObservation.reasonforchangeother'></textarea>
+
+            </div>
+            <div class="modal-footer">
+                <!-- <div *ngIf="showEditRecordError" style="padding: 4px;" class="alert float-right alert-danger"
+                    role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                        class="text-danger">{{editRecordError}}</span>
+                </div> -->
+                <div *ngIf="editshowError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                        class="text-danger">{{editshowErrormessage}}.</span>
+                </div>
+                <img style="width: 40px ; height: 30px;;"
+                    *ngIf="appService.AuthoriseAction('eobs_delete_blood_glucose')" (click)="Deleteobservation()"
+                    src="assets/images/Tick Secondary.svg" class="float-right">
+                <img src="assets/images/Cross Primary.svg" height="32px" (click)="DeleteCancelClick()"
+                    width="40px" class="float-right" role="button">
+                  
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div *ngIf="showEditHistory" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">History</h5>
+                <button type="button" class="close" (click)="showEditHistory=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 300px;overflow-y: auto;">
+                <table class="table">
+                    <tr style="background: #F0F4FF;">
+                        <th>Observation Time</th>
+                        <th>Height</th>
+                        <th>Weight</th>
+                        <th>Waist circumference</th>
+                        <th>Patient Refused</th>
+                        <th>BMI</th>
+                        <th>Waist to Height Ratio</th>
+                        <th>Monitoring frequency</th>
+                        <th>Reason</th>
+                        <th>Recorded Date/Time</th>
+                        <th>Amended by</th>
+                        <th>Reason for Refusal</th>
+                        <th>Reason for Edit/Delete</th>
+                      
+                    </tr>
+                    <tr *ngFor="let Record of RecordHistory" [ngClass]="{'strickout': Record.isdeleted}">
+                        <td style="text-align: center;"> {{Record.observationtime | date: 'dd/MM/yyyy
+                            HH:mm'}}</td>
+                            <td  style="text-align: center;"  [ngClass]="{'previousvalue': Record._heightadded}">{{Record.height}} <span *ngIf="Record.height"> cm </span></td>
+                            <td  style="text-align: center;" [ngClass]="{'previousvalue': Record._weightadded}">{{Record.weight}} <span *ngIf="Record.weight">kg</span></td>
+                            <td  style="text-align: center;" [ngClass]="{'previousvalue': Record._waistadded}">{{Record.waistcircumferance}} <span *ngIf="Record.waistcircumferance">cm</span></td>
+                            <td  style="text-align: center;" *ngIf="Record.patientrefused">Patient Refused</td>
+                            <td  style="text-align: center;" *ngIf="!Record.patientrefused"></td>
+                            <td  style="text-align: center;">{{Record.bmi}}  <span *ngIf="Record.bmi"> (kg/m2) </span> </td>
+                            <td  style="text-align: center;">{{Record.waisttoheight}}</td>
+
+                        <td *ngIf="!Record.isstopped">{{Record.frequency}} {{Record.frequencyunit}}</td>     <td *ngIf="Record.isstopped">Monitoring Stoped</td>
+                            <td *ngIf="Record.frequencyreason != 'Other'">{{Record.frequencyreason}}</td>     <td *ngIf="Record.frequencyreason == 'Other'">{{Record.frequencyreasonother}}</td>
+                            <td style="text-align: center;"> {{Record.createdon | date: 'dd/MM/yyyy HH:mm'}}</td>
+                                <td  style="text-align: center;">{{Record.completedby}}</td>
+                                <td  style="text-align: center;">{{Record.reasonforpatientrefused}}</td>
+                                <td  style="text-align: center;">{{Record.reasonforchange}}</td>
+                               
+                    </tr>
+                </table>
+              
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div [hidden]="!showGraph" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h3 class="modal-title" id="exampleModalLabel">Height, Weight & Waist Circumference Graph</h3>
+                <button type="button" class="close" (click)="showGraph=false">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto;">
+                
+                <div #visualization id="visualization"></div>
+
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 id="visualizationWeightLabel1">Weight</h3>
+
+
+                <!-- <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        4 Spontaneous</li>
+                    <li style="margin-right: 20px;">
+                        3 To Sound</li>
+                    <li style="margin-right: 20px;">
+                        2 To Pressure</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul> -->
+
+
+                <div #visualizationWeight id="visualizationWeight"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 class="modal-title" id="visualizationBMILabel2">BMI</h3>
+
+                <!-- <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        5 Orientated</li>
+                    <li style="margin-right: 20px;">
+                        4 Confused</li>
+                    <li style="margin-right: 20px;">
+                        3 Words</li>
+                    <li style="margin-right: 20px;">
+                        2 Sounds</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul> -->
+
+
+                <div #visualizationBMI id="visualizationBMI"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 class="modal-title" id="visualizationHeightLabel2">Height</h3>
+
+                <!-- <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        5 Orientated</li>
+                    <li style="margin-right: 20px;">
+                        4 Confused</li>
+                    <li style="margin-right: 20px;">
+                        3 Words</li>
+                    <li style="margin-right: 20px;">
+                        2 Sounds</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul> -->
+
+
+                <div #visualizationHeight id="visualizationHeight"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 class="modal-title" id="visualizationWaist2HeightRatioLabel2">Waist to Height Ratio</h3>
+
+                <!-- <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        5 Orientated</li>
+                    <li style="margin-right: 20px;">
+                        4 Confused</li>
+                    <li style="margin-right: 20px;">
+                        3 Words</li>
+                    <li style="margin-right: 20px;">
+                        2 Sounds</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul> -->
+
+
+                <div #visualizationWaist2HeightRatio id="visualizationWaist2HeightRatio"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 class="modal-title" id="visualizationWaistCircumferenceLabel3">Waist Circumference</h3>
+
+                <!-- <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        6 Obey Commands</li>
+                    <li style="margin-right: 20px;">
+                        5 Localising</li>
+                    <li style="margin-right: 20px;">
+                        4 Normal Flexion</li>
+                    <li style="margin-right: 20px;">
+                        3 Abnormal Flexion</li>
+                    <li style="margin-right: 20px;">
+                        2 Extension</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul> -->
+
+
+                <div #visualizationWaistCircumference id="visualizationWaistCircumference"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+
+
+
+
+                <div class="mt-3 mb-n2 float-right">
+                    <span><i class="mr-3 fa-sharp fa-solid fa-magnifying-glass-minus" style="font-size:38px;"
+                            (click)="zoomOut()"></i></span>
+                    <span><i class="fa-sharp fa-solid fa-magnifying-glass-plus" style="font-size:38px;"
+                            (click)="zoomIn()"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

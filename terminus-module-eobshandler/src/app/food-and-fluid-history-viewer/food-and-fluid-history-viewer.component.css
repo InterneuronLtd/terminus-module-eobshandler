@@ -1,0 +1,14 @@
+.strikeout {
+    text-decoration: line-through;
+}
+
+.tooltip-history {
+    white-space: nowrap; 
+    width: 100px; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.modal{
+    backdrop-filter: brightness(0.5);
+}
+

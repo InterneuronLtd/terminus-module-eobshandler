@@ -1,0 +1,461 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content modal-lg">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Postural Blood Pressure</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="showeModelditdiscardMethod('model') ">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div *ngIf="!patientrefuse" class="col" style="max-width: 392px;">
+                            <table>
+                                <tr>
+                                    <th></th>
+                                    <th>Systolic</th>
+                                    <th></th>
+                                    <th> Diastolic</th>
+                                    <th></th>
+                                </tr>
+                                <tr>
+                                    <th>Sitting/Lying &nbsp; &nbsp;</th>
+                                    <th> <input type="number" min="50" Max="300" class="form-control"   (input)="inputCheck($event,'systolicsitting')"
+                                            [(ngModel)]="systolicsitting" style="width:80px;" /></th>
+                                    <th style="width: 16px;text-align: center;">/</th>
+                                    <th> <input type="number" min="1" class="form-control"  [ngClass]="sittingvalueError ?'boderclass': ''" (input)="inputCheck($event,'diastolicsitting')"
+                                            [(ngModel)]="diastolicsitting" style="width:80px;" /></th>
+                                    <th>&nbsp;mm/Hg</th>
+                                </tr>
+                                <tr>
+                                    <th>Standing</th>
+                                    <th> <input type="number" min="1" class="form-control"  (input)="inputCheck($event,'systolicstanding')"
+                                            [(ngModel)]="systolicstanding" style="width:80px;" /></th>
+                                    <th style="width: 16px;text-align: center;">/</th>
+                                    <th> <input type="number" min="1" class="form-control"  [ngClass]="standingvalueError ?'boderclass': ''" (input)="inputCheck($event,'diastolicstanding')"
+                                            [(ngModel)]="diastolicstanding" style="width:80px;" /></th>
+                                    <th>&nbsp;mm/Hg</th>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col">
+                            <table>
+                                <tr>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        Observation Time
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <input class="form-control" id="date-of-birth" name="date-of-birth" type="text"
+                                            placeholder="Select Date" bsDatepicker [(ngModel)]="Choosenfilterdate"
+                                            (ngModelChange)="ChoosenfilterdateChange($event)"
+                                            [bsConfig]="{ showWeekNumbers:false, dateInputFormat: 'DD-MM-YYYY', containerClass:'theme-default' }"
+                                            [maxDate]="today" [minDate]="mindate" autocomplete="off">
+                                    </th>
+                                    <th>
+                                        <timepicker [minuteStep]="1" [(ngModel)]="Choosenfilterdate" [min]="minTime"
+                                            [max]="maxTime" [showMeridian]="false">
+                                        </timepicker>
+                                    </th>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                    <div *ngIf="!patientrefuse">
+                        <hr>
+                        <div class="row"
+                            *ngIf="systolicsitting >0 && systolicstanding >0 && diastolicsitting >0 && diastolicstanding >0">
+                            <div class="col">
+                                Postural Change: <b>{{ changevalue}}  mm/Hg </b></div>
+                            <div *ngIf="(systolicstanding - systolicsitting) > 20 || ( systolicsitting - systolicstanding ) > 20"
+                                class="alert-danger col" role="alert">
+                                <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>This postural
+                                change is
+                                > 20mm/Hg. Please escalate as required.
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div *ngIf="appService.AuthoriseAction('eobs_record _patient_refused_postural_blood')">
+                        <label *ngIf="showpatientrefuselink" (click)="showpatientrefuselink=false"
+                            style="color: #007bff;">Patient Refused?</label><br />
+                        <div *ngIf="!showpatientrefuselink" class="form-check">
+                            <input [(ngModel)]="patientrefuse" (ngModelChange)="patientrefuseChange()" type="checkbox"
+                                class="form-check-input" id="chkpatientrefusedbp">
+                            <label class="form-check-label" for="chkpatientrefusedbp">Patient Refused</label>
+                        </div>
+
+                        <div *ngIf="patientrefuse">
+                            <br />
+                            <strong class="form-check-label">Reason for Refusal</strong><span style="color:red;">
+                                *</span>
+                            <textarea class="form-control" row="5" maxlength="800"
+                                [(ngModel)]='reasonforRefusal'></textarea>
+                            <hr>
+
+                        </div>
+                    </div>
+                    <img src="assets/images/Table_icon.svg" height="25px" 
+                        (click)="ShowHistory=!ShowHistory" role="button" >
+
+                    <img *ngIf="!messageSuccess && appService.AuthoriseAction('eobs_add_postural_blood_pressure_value')"
+                        (click)="SaveObsevation()" src="assets/images/Tick Primary.svg" height="32px" width="40px"
+                        class="float-right" role="button">
+
+                    <div *ngIf="messageSuccess" style="padding: 4px;" class="alert float-right alert-primary"
+                        role="alert">
+                        Observation Saved Successfully.
+                    </div>
+                    <div *ngIf="showerror" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;
+                        <span class="text-danger">{{showerrormessage}}</span>
+                    </div>
+
+                </div>
+                <div  class="modal-body "  *ngIf="ShowHistory"
+                  style="max-height: 250px; width: 100%; overflow-y: auto;  white-space: nowrap;">
+
+
+                    <div>
+                        <app-history-viewer [monitoringFrequencyHistoryData]="monitoringFrequencyHistoryData"
+                            [rowForHistoryViewer]="rowForHistoryViewer"
+                            (historyViewerOutput)="receivehistoryViewerData($event)"></app-history-viewer>
+
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="showEdit" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabeledit" style="display: block; padding-right: 17px;" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                    <h5 class="modal-title" id="exampleModalLabeledit">Edit Postural Blood Pressure</h5>
+                    <button type="button" class="close" (click)="showeModelditdiscardMethod('edit')">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table>
+                        <tr>
+                            <th>Observation Time:</th>
+                            <th colspan="2">{{selectedposturalbloodpressure.observationtime | date: 'dd/MM/yyyy HH:mm'}}
+                            </th>
+
+
+                        </tr>
+                        <tr *ngIf="!selectedposturalbloodpressure.patientrefused">
+                            <th></th>
+                            <th>Systolic</th>
+                            <th></th>
+                            <th> Diastolic</th>
+                            <th></th>
+                        </tr>
+                        <tr *ngIf="!selectedposturalbloodpressure.patientrefused">
+                            <th>Sitting/Lying: &nbsp; &nbsp;</th>
+                            <th> <input type="number" min="1" class="form-control" (input)="inputCheck($event)" 
+                                    [(ngModel)]="selectedposturalbloodpressure.sbpsitting" style="width:80px;" /></th>
+                            <th style="width: 16px;text-align: center;">/</th>
+                            <th> <input type="number" min="1" class="form-control" (input)="inputCheck($event)"  [ngClass]="editsittingvalueError ?'boderclass': ''"
+                                    [(ngModel)]="selectedposturalbloodpressure.dbpsitting" style="width:80px;" /></th>
+                            <th>&nbsp;mm/Hg</th>
+                        </tr>
+                        <tr *ngIf="!selectedposturalbloodpressure.patientrefused">
+                            <th>Standing:</th>
+                            <th> <input type="number" min="1" class="form-control" (input)="inputCheck($event)" 
+                                    [(ngModel)]="selectedposturalbloodpressure.sbpstanding" style="width:80px;" /></th>
+                            <th style="width: 16px;text-align: center;">/</th>
+                            <th> <input type="number" min="1" class="form-control" (input)="inputCheck($event)"  [ngClass]="editstandingvalueError ?'boderclass': ''"
+                                    [(ngModel)]="selectedposturalbloodpressure.dbpstanding" style="width:80px;" /></th>
+                            <th>&nbsp;mm/Hg</th>
+                        </tr>
+                    </table>
+                    <div *ngIf="!selectedposturalbloodpressure.patientrefused">
+                        <div
+                            *ngIf="selectedposturalbloodpressure.sbpsitting >0 && selectedposturalbloodpressure.dbpsitting >0 && selectedposturalbloodpressure.sbpstanding >0 && selectedposturalbloodpressure.dbpstanding >0">
+                            <div> <br />
+                                Postural Change: <b>{{changevalueedit}}  mm/Hg </b></div> <br />
+                            <div *ngIf="(selectedposturalbloodpressure.sbpstanding - selectedposturalbloodpressure.sbpsitting) > 20 || ( selectedposturalbloodpressure.sbpsitting - selectedposturalbloodpressure.sbpstanding ) > 20"
+                                class="alert-danger " role="alert">
+                                <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>This postural
+                                change is > 20mm/Hg. Please escalate as required.
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div *ngIf="!selectedposturalbloodpressure.patientrefused">
+                        <b>Reason for edit:</b>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="exampleRadios1" name='Reasonedit'
+                                value='Entered in error' [(ngModel)]='selectedposturalbloodpressure.resonforchange'
+                                checked>
+                            <label class="form-check-label" for="exampleRadios1">
+                                Entered in error
+                            </label>
+                        </div>
+                        <br />
+                        <!-- <div class="form-check">
+                            <input class="form-check-input" type="radio" id="exampleRadios2" name='Reasonedit'
+                                value='Recorded for the wrong patient'
+                                [(ngModel)]='selectedposturalbloodpressure.resonforchange'>
+                            <label class="form-check-label" for="exampleRadios2">
+                                Recorded for the wrong patient
+                            </label>
+                        </div> <br /> -->
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="exampleRadios3" name='Reasonedit'
+                                value='Other' [(ngModel)]='selectedposturalbloodpressure.resonforchange'>
+                            <label class="form-check-label" for="exampleRadios3">
+                                Other
+                            </label>
+                        </div> <br />
+                        <textarea *ngIf="selectedposturalbloodpressure.resonforchange == 'Other'" class="form-control"
+                            maxlength="800" row="4" [(ngModel)]='OthereReason'></textarea>
+                    </div>
+                    <div *ngIf="appService.AuthoriseAction('eobs_record _patient_refused_postural_blood')">
+                        <div class="form-check">
+                            <input [(ngModel)]="selectedposturalbloodpressure.patientrefused" type="checkbox"
+                                class="form-check-input" id="editchkpatientrefused">
+                            <label class="form-check-label" for="editchkpatientrefused">Patient Refused</label>
+                        </div>
+
+                        <div *ngIf="selectedposturalbloodpressure.patientrefused">
+                            <br />
+                            <strong class="form-check-label">Reason for Refusal</strong><span style="color:red;">
+                                *</span>
+                            <textarea class="form-control" row="5" maxlength="800"
+                                [(ngModel)]='selectedposturalbloodpressure.reasonforpatientrefused'></textarea>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <!-- <div class="pull-left" > -->
+                        <img class="pull-left" style="width: 40px ; height: 30px;;" *ngIf="appService.AuthoriseAction('eobs_delete_postural_blood_pressure')"
+                            (click)="showDelete=true;showEdit=false " src="assets/images/Delete.svg">
+                    <!-- </div> -->
+                    <!-- <div > -->
+                        <img src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right" *ngIf="appService.AuthoriseAction('eobs_Edit_postural_blood_pressure')"
+                            (click)="saveEditorDelete('Edit')" role="button">
+                    <!-- </div> -->
+                    <div *ngIf="editshowerror" style="padding: 4px;" class="alert float-right alert-danger"
+                        role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;
+                        <span class="text-danger">{{editshowerrormessage}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div *ngIf="showDelete" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                    <h5 class="modal-title" id="exampleModalLabeldelete">Delete Confirmation</h5>
+
+                </div>
+                <div class="modal-body">
+                    Are you sure that you want to delete the postural blood pressure?<br />  Please provide
+                    reason.<br />
+                    <b>Reason:</b>
+                    <!-- <select  >
+                <option [value]="Entered in error"> Entered in error</option>
+                <option [value]="Recorded for the wrong patient">Recorded for the wrong patient</option>
+            </select> -->
+                    <select class="form-control" [(ngModel)]='selectedposturalbloodpressure.resonforchange'
+                        id="ddlprescriptionindications">
+                        <option value="Entered in error">
+                            Entered in error</option>
+                        <option value="Recorded for the wrong patient">
+                            Recorded for the wrong patient</option>
+                        <option value="Other">
+                            Other</option>
+                    </select>
+                    <br />
+
+                    <textarea *ngIf="selectedposturalbloodpressure.resonforchange == 'Other'" class="form-control"
+                        maxlength="800" row="4" [(ngModel)]='OthereReason'></textarea>
+
+                </div>
+                <div class="modal-footer">
+                    <div *ngIf="editshowerror" style="padding: 4px; margin-top: 15px;"
+                        class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;
+                        <span class="text-danger">{{editshowerrormessage}}</span>
+                    </div>
+                    <div *ngIf="appService.AuthoriseAction('eobs_delete_postural_blood_pressure')">
+                        <img style="width: 40px ; height: 30px;;" (click)="saveEditorDelete('Delete')"
+                            src="assets/images/Tick Secondary.svg" class="float-right">
+                    </div>
+                    <img src="assets/images/Cross Primary.svg" (click)="DeleteCancelClick()" height="32px"
+                        width="40px" class="float-right" role="button">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div *ngIf="showEditHistory" class="modal fade show" id="examplediscardModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabelhis" style="display: block; padding-right: 17px;" aria-modal="true">
+
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content modal-xl">
+                <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                    <h5 class="modal-title" id="exampleModalLabeldelete">History</h5>
+                    <button type="button" class="close" (click)="showEditHistory=false">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height: 300px;overflow-y: auto;">
+
+                    <table class="table table-borderless">
+                        <tr style="background: #F0F4FF;">
+
+                            <th colspan="2" style="text-align: center; padding-bottom: 0px;">Sitting/Lying</th>
+                            <th colspan="2" style="text-align: center; padding-bottom: 0px;">Standing</th>
+                            <th style="text-align: center; padding-bottom: 0px;"></th>
+                            <th style="text-align: center; padding-bottom: 0px;"></th>
+                            <th style="text-align: center; padding-bottom: 0px;"></th>
+                            <th style="text-align: center; padding-bottom: 0px;"></th>
+                            <th style="text-align: center; padding-bottom: 0px;"></th>
+                        </tr>
+                        <tr style="background: #F0F4FF;text-align: center;">
+                            <th>Systolic</th>
+                            <th>Diastolic</th>
+                            <th>Systolic</th>
+                            <th>Diastolic</th>
+                            <th>Date/Time</th>
+                            <th>Amended By</th>
+                            <th>Reason for Edit/Delete</th>
+                            <th>Postural Change</th>
+                            <th>Reason for Refusal</th>
+                        </tr>
+                        <tr *ngFor="let Record of RecordHistory">
+
+                            <td *ngIf="!Record.patientrefused" style="text-align: center;">{{Record.sbpsitting}}</td>
+                            <td *ngIf="!Record.patientrefused" style="text-align: center;">{{Record.dbpsitting}}</td>
+                            <td *ngIf="!Record.patientrefused" style="text-align: center;">{{Record.sbpstanding}}</td>
+                            <td *ngIf="!Record.patientrefused" style="text-align: center;">{{Record.dbpstanding}}</td>
+
+                            <td *ngIf="Record.patientrefused" style="text-align: center;">NA</td>
+                            <td *ngIf="Record.patientrefused" style="text-align: center;">NA</td>
+                            <td *ngIf="Record.patientrefused" style="text-align: center;">NA</td>
+                            <td *ngIf="Record.patientrefused" style="text-align: center;">NA</td>
+
+                            <td style="text-align: center;"> {{Record.modifiedon | date: 'dd/MM/yyyy HH:mm'}}</td>
+                            <td  *ngIf="Record.isamended && !Record.isdeleted" style="text-align: center;"> Edited by {{Record.createdby}}</td>
+                            <td  *ngIf="Record.isamended && Record.isdeleted" style="text-align: center;"> Deleted by {{Record.createdby}}</td>
+                            <td  *ngIf="!Record.isamended && !Record.isdeleted" style="text-align: center;">Added by {{Record.createdby}}</td>
+                            <td style="text-align: center;">{{Record.resonforchange}}</td>
+                            
+                            <td *ngIf="!Record.patientrefused" style="text-align: center;">{{Record.changevalue}} mm/Hg
+                            </td>
+                            <td *ngIf="Record.patientrefused" style="text-align: center;">Patient Refused</td>
+                            <td style="text-align: center;">{{Record.reasonforpatientrefused}}</td>
+                        </tr>
+
+
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="showeditdiscard" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">Discard Changes</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to close? All the unsaved<br />  data entered will be lost if you continue.
+             
+               
+              
+            </div>
+            <div class="modal-footer">
+               
+                <div>
+                    <img style="width: 40px ; height: 30px;;" (click)="showeditdiscard=false;showEdit=false"
+                        src="assets/images/Tick Secondary.svg" class="float-right">
+                </div>
+                <img src="assets/images/Cross Primary.svg" (click)="showeditdiscard=false;showEdit=true" height="32px"
+                    width="40px" class="float-right" role="button">
+
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <div *ngIf="showeModelditdiscard" class="modal fade show" id="discardModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldiscardModal" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldiscardModal">Discard Changes</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to close? All the unsaved<br />  data entered will be lost if you continue.
+             
+               
+              
+            </div>
+            <div class="modal-footer">
+               
+                <div>
+                    <img style="width: 40px ; height: 30px;;" (click)="showeModelditdiscard=false;closeBloodPressureModal()"
+                        src="assets/images/Tick Secondary.svg" class="float-right">
+                </div>
+                <img src="assets/images/Cross Primary.svg" (click)="showeModelditdiscard=false" height="32px"
+                    width="40px" class="float-right" role="button">
+
+            </div>
+        </div>
+    </div>
+</div>

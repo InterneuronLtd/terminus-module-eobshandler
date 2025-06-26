@@ -1,0 +1,153 @@
+
+Baseview
+-----------------
+bristolstooldetails
+getbloodglucosedetails
+posturalbloodpressuredetail
+getgcsobservationsdettails
+eobs_latestmonitoringfrequencies
+eobs_getlatestmonitoringfrequencynews2
+carerecord_observationsmhc
+foodandfluidobservationdata
+foodandfluidobservationhistorydata
+patientswithfoodandfluid
+patientswithoutfoodandfluid
+
+Entity
+-------------
+posturalbloodpressureView
+gcsobservations
+observation
+observationevent
+observationeventmonitoring
+observationtype
+foodfluidobservation
+
+RBACK
+----------------
+eobs_add_postural_blood_pressure_value
+eobs_delete_postural_blood_pressure
+eobs_view_postural_blood_pressure
+eobs_view_bristol_stool_chart	
+eobs_view_glasgow_coma_scale	
+eobs_view_food_and_fluid	
+eobs_record _patient_refused_postural_blood
+eobs_Edit_postural_blood_pressure
+eobs_record _patient_refused_Glasgow_Coma_Scale
+eobs_edit_Glasgow_Coma_Scale	
+eobs_add_Glasgow_Coma_Scale
+eobs_delete_Glasgow_Coma_Scale
+eobs_set_frequency_Glasgow_Coma_Scale	
+eobs_delete_blood_glucose	 
+eobs_add_blood_glucose	
+eobs_edit_blood_glucose	  
+eobs_set_frequency_blood_glucose  
+eobs_record _patient_refused_blood_glucose	
+eobs_view_blood_glucose
+eobs_edit_bristol_stool_chart
+eobs_delete_bristol_stool_chart
+eobs_set_monitoring_freq_bristol_stool_chart
+eobs_monitoring_not_required_bristol_stool_chart
+eobs_add_bristol_stool_chart
+eobs_add_obs_monitoring_freq
+eobs_view_observationmonitoring
+eobs_add_foodandfluid
+eobs_amend_foodandfluid
+eobs_delete_foodandfluid
+eobs_setmonitoring_foodandfluid
+------------------------------------------------------------------------------------------
+
+Observation Meta table
+
+INSERT INTO entitystorematerialised.meta_observationtype
+(observationtype_id, "_row_id", "_sequenceid", "_contextkey", "_createdtimestamp", "_createddate", "_createdsource", "_createdmessageid", "_createdby", "_recordstatus", "_timezonename", "_timezoneoffset", "_tenant", code, "name", active, valuetype, valuelist, "_deleteddate", "_deletedby", "_additionalinfo")
+VALUES('46cade37-8e71-4c92-8f4d-8efa5b8a0ae6', 'cb5e3703-dc7e-4af4-87e2-8129fee3cf0b', 38, NULL, '2024-09-17 04:55:43.372', '2024-09-17 10:25:43.372', NULL, NULL, 'unknown', 1, NULL, NULL, NULL, 'bristolstoolchart', 'bristolstoolchart', true, 'STRING', '', NULL, NULL, NULL);
+
+
+Lists
+------------------------
+Acuity Board (NEWS2)
+All Inpatients
+All Observations
+Current Inpatients
+NEWS2 Observations due
+NEWS2 Observations overdue
+Patients NOT Running Food and Fluid Chart Monitoring
+Patients Running Food and Fluid Chart Monitoring
+
+-----------------------------------------------------------------------------------
+Hardik Sheth Baseview
+
+Date 08/10/2024
+
+TCP-550 updated baseview 
+
+terminus_bristolstooldetails
+eobs_getlatestmonitoringfrequencynews2
+eobs_latestmonitoringfrequencies
+----------------------------------------------------------------------------------------
+Sachin Chawda Baseview
+
+Date 14/10/24
+
+terminus_getbloodglucosedetails
+patientbanner_clinicalinformation
+patientbanner_mainwarnings
+getgcsobservationsdettails
+posturalbloodpressuredetail
+
+Actions
+
+terminus_add_height	
+terminus_add_waistcircumference
+terminus_add_weight
+
+select  r.rolename , actionname from rbac.roleprevilages r
+inner join rbac.action ac on ac.action_id = r.objectid
+where r.rolename like('%eOBS%') and objecttypeid='3'
+----------------------------------------------------------------------------------------------
+Gautam Bhatt Baseview
+
+foodandfluid_foodandfluidobservationdata
+foodandfluid_foodandfluidobservationhistorydata
+terminus_acuity
+terminus_allobservations
+terminus_news2obsdue
+terminus_news2obsoverdue
+terminus_patientswithfoodandfluid
+terminus_patientswithoutfoodandfluid
+terminus_allinpatients
+
+Application List mapping
+
+List configuration
+List permission
+--------------------------------------------------------------------------------------------
+
+
+Date: 20-01-2025 TCP-768 & TCP-769
+
+Baseview
+
+bristolstooldetails
+
+-------------------------------------------------------------------------------------------------
+
+21-03-2025 TCP-524
+
+Baseview
+
+terminus_observationmonitoringfrequencydetails
+eobs_getlatestmonitoringfrequencynews2
+eobs_latestmonitoringfrequencies
+eobs_personadditionalguidancehistory
+
+Entity
+
+core_personadditionalguidance
+
+Actions
+
+eobs_add_additionalguidance
+eobs_amend_additionalguidance
+eobs_view_additionalguidance

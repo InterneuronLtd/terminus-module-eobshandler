@@ -1,0 +1,44 @@
+.strickout {
+    text-decoration: line-through;
+}
+.modal{
+    backdrop-filter: brightness(0.5);
+}
+
+.tooltip-history {
+    white-space: nowrap; 
+    width: 150px; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+    border-radius: 5px; /* Rounded corners for handle */
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555; 
+  }
+
+.modal-dialog
+{
+    height: 92%;
+}
+
+.modal-content
+{
+    max-height: calc(100% - 70px)
+}

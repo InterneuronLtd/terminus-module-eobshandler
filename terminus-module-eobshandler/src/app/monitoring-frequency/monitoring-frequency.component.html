@@ -1,0 +1,423 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<form id="f1" [formGroup]="obsmonitoringfrequencyform">
+    <div class="blood-glucose-metadata-selecto form-group">
+        <div class="frame-group">
+              <div [hidden]="(selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency')" [ngClass]="(selectedobservationtype != 'news2frequency' && selectedobservationtype != 'pewsfrequency' && selectedobservationtype != 'mewsfrequency' && selectedobservationtype != 'marsifrequency') ? 'blood-glucose-parent': 'blood-glucose-parent2'">
+                    <div class="blood-glucose">
+                        <span>Monitoring frequency</span>
+                        <span style="color:red;"> *</span>
+                    </div>
+                    
+                    <div class="blood-glucose"></div>
+              </div>
+              <div class="frame-container" [hidden] = "(selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency')">
+                <!-- <div class="frame-container"> -->
+                    <!-- <div class="frame-group">
+                      <span class="h5 ml-1">NEWS2 Suggested frequency for score {{ latestNEWS2Score?.score}} : {{getFrequencyFromNEWS2Score(latestNEWS2Score)?.suggestedMonitoringFrequencyValue}} {{getFrequencyFromNEWS2Score(latestNEWS2Score)?.suggestedMonitoringFrequencyUnit}}</span>
+                    </div> -->
+                  <!-- </div> -->
+                  <div class="frame-group">
+                        <div class="radio-button">
+                              <input formControlName="monitoringFrequency" enterIsNext value="customMonitoringFrequency" type="radio" class="form-control radio-button-child" id="txtPositionStanding" (change)="monitoringFrequencyValueChanged()">
+                        </div>
+                        <div class="blood-glucose-prototype">
+                                <div *ngIf="selectedobservationtype == 'heightWeightWaist'"  class="blood-glucose-prototype">
+                                    <!-- <input type="text" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57" (change)="calculateMonitoringFrequency()"
+                                    positiveNumberRange style="width: 80px;padding-right: 0px;padding-left: 0px;text-align: center;"
+                                    formControlName="frequency_entered" enterIsNext class="form-control wrapper dropdown-parent"/> -->
+                                    <select formControlName="frequency_entered" class="form-control dropdown-selector" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option> 
+                                          <option *ngFor="let num of getNumbers()" [value]="num">
+                                            {{ num }}
+                                          </option> 
+                                    </select>
+                                    <div class="dropdown-selector" id="dropdownSelectorContainer">
+                                       <label class="p-2">days</label>
+                                    </div>
+                                </div>
+                              
+                              <div *ngIf="selectedobservationtype != 'heightWeightWaist'" class="blood-glucose-prototype">
+                                <!-- <input type="text" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57" (change)="calculateMonitoringFrequency()"
+                                positiveNumberRange style="width: 80px;padding-right: 0px;padding-left: 0px;text-align: center;"
+                                formControlName="frequency_entered" enterIsNext class="wrapper"/> -->
+                                <div *ngIf="obsmonitoringfrequencyform['controls'].frequencyunit_entered.value!='min' && obsmonitoringfrequencyform['controls'].frequencyunit_entered.value!='hours' && obsmonitoringfrequencyform['controls'].frequencyunit_entered.value!='days'" class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequency_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option>    
+                                    </select>
+                                </div>
+                                <div *ngIf="obsmonitoringfrequencyform['controls'].frequencyunit_entered.value=='min'" class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequency_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option>    
+                                          <option *ngFor="let min of minutes" value={{min.id}}>{{min.value}}</option>   
+                                          <!-- <option value="5">5</option>  
+                                          <option value="10">10</option>
+                                          <option value="15">15</option>
+                                          <option value="30">30</option>
+                                          <option value="60">60</option> -->
+                                    </select>
+                                </div>
+                                <div *ngIf="obsmonitoringfrequencyform['controls'].frequencyunit_entered.value=='hours'" class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequency_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option>  
+                                          <option *ngFor="let hour of hours" value={{hour.id}}>{{hour.value}}</option>    
+                                          <!-- <option value="1">1</option>  
+                                          <option value="2">2</option>
+                                          <option value="4">4</option>
+                                          <option value="6">6</option>
+                                          <option value="8">8</option>
+                                          <option value="12">12</option>
+                                          <option value="24">24</option> -->
+                                    </select>
+                                </div>
+                                <div *ngIf="obsmonitoringfrequencyform['controls'].frequencyunit_entered.value=='days'" class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequency_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option>    
+                                          <option *ngFor="let day of days" value={{day.id}}>{{day.value}}</option>  
+                                          <!-- <option value="1">1</option>
+                                          <option value="2">2</option>
+                                          <option value="3">3</option>
+                                          <option value="4">4</option>
+                                          <option value="5">5</option>
+                                          <option value="6">6</option>
+                                          <option value="7">7</option> -->
+                                    </select>
+                                </div>
+                                <div class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequencyunit_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                        <option value="null">Please Select</option>  
+                                        <option value="min">minutes</option>
+                                        <option value="hours">hours</option>
+                                        <!-- <option *ngIf="selectedobservationtype == 'news2frequency' && (obsmonitoringfrequencyform['controls'].frequency_reason.value=='Medical request' || obsmonitoringfrequencyform['controls'].frequency_reason.value=='Clinical judgement')" value="days">days</option> -->
+                                        <option value="days">days</option>
+                                        <!-- <option value="weeks">weeks</option> -->
+                                    </select>
+                                </div>
+                          </div>
+                              
+                        </div>
+                  </div>
+                  <!-- <div class="frame-container">
+                    <div class="frame-group">
+                      <span class="h5 ml-1">NEWS2 Suggested frequency for score {{this.latestNEWS2Score.score}}</span>
+                    </div>
+                  </div> -->
+                  <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.invalid && (obsmonitoringfrequencyform['controls'].frequency_entered.dirty || obsmonitoringfrequencyform['controls'].frequency_entered.touched)"
+                      class="text-danger">
+          
+                      <!-- <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.errors.required">
+                      Frequency is required
+                      </div> -->
+                      <!-- <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.errors.min">
+                      Frequency can be 0-60
+                      </div> -->
+                      <!-- <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.errors.max">
+                            Frequency cannot be greater than {{validationHours}} hours
+                      </div> -->
+          
+                </div>
+                  <div class="radio-button1" [hidden]="true">
+                        <input formControlName="monitoringFrequency" enterIsNext value="pause" type="radio" class="form-control radio-button-child" id="txtPause" (change)="monitoringFrequencyValueChanged()">
+                        <div class="radio-button2">Pause</div>
+                  </div>
+                  <div class="radio-button1"  [hidden]="(selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency')">
+                        <input  formControlName="monitoringFrequency" enterIsNext value="stop" type="radio" class="form-control radio-button-child" id="txtStop" (change)="monitoringFrequencyValueChanged()">
+                        <div class="radio-button2">Stop monitoring</div>
+                  </div>
+                  <div class="radio-button1" [hidden]="true">
+                      <input formControlName="monitoringFrequency" enterIsNext value="monitoringnotrequired" type="radio" class="form-control radio-button-child" id="txtmonitoringnotrequired" (change)="monitoringFrequencyValueChanged()">
+                      <div class="radio-button2">Regular monitoring not required</div>
+                </div>
+            </div>
+        </div>
+        <div class="reason-selector">
+              <div [ngClass]="(selectedobservationtype != 'news2frequency' && selectedobservationtype != 'pewsfrequency' && selectedobservationtype != 'mewsfrequency' && selectedobservationtype != 'marsifrequency') ? 'blood-glucose-parent': 'blood-glucose-parent2'">
+                    <div class="blood-glucose">
+                          <span>Reason</span>
+                          <span class="span">*</span>
+                    </div>
+                    <div class="blood-glucose"></div>
+              </div>
+
+              <div *ngIf="(selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency')">
+                  <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='customMonitoringFrequency'" class="dropdown-selector" id="dropdownSelectorContainer">
+                        <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()" style="width: 260px;">
+                        <option value="null">Please select</option>
+                        <option *ngIf="selectedobservationtype == 'news2frequency'" value="NEWS2 protocol">NEWS2 protocol</option>
+                        <option *ngIf="selectedobservationtype == 'pewsfrequency'" value="PEWS protocol">PEWS protocol</option>
+                        <option *ngIf="selectedobservationtype == 'mewsfrequency'" value="MEWS protocol">MEWS protocol</option>
+                        <option *ngIf="selectedobservationtype == 'marsifrequency'" value="Marsi MEWS protocol">Marsi MEWS protocol</option>
+                        <option value="Clinical judgement">Clinical judgement</option>
+                        <option title="Rapid tranquilisation(Follows the same clinical process - 15 minutes interval for the first hour, THEN an option frequency time MUST be chosen)" value="Rapid tranquilisation(Follows the same clinical process - 15 minutes interval for the first hour, THEN an option frequency time MUST be chosen)">Rapid tranquilisation(Follows the same...</option>
+                        <option value="ECT">ECT</option>
+                        <option value="Seclusion">Seclusion</option>
+                        <option value="Patient fall">Patient fall</option>
+                        <option value="Clozapine">Clozapine</option>
+                        <option value="Alcohol withdrawal">Alcohol withdrawal</option>
+                        <option value="Medical request">Medical request</option>
+                        <option value="Acute hospital ED">Acute hospital ED</option>
+                        <option value="Extended leave">Extended leave</option>
+                        <option value="AWOL">AWOL</option>
+                        <option title="Not appropriate for electronic EWS, alternative paper EWS chart in use" value="Not appropriate for electronic EWS, alternative paper EWS chart in use">Not appropriate for electronic EWS, alt...</option>
+                        <!-- <option value="Other">Other</option> -->
+                    </select>
+                  </div>
+              </div>
+              
+              <div *ngIf="selectedobservationtype == 'GCSfrequency'">
+                  <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='customMonitoringFrequency'" class="dropdown-selector"  style="margin-left: 8px;" id="dropdownSelectorContainer">
+                        <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()" style="width: 260px;">
+                        <option value="null">Please select</option>
+                        <option value="Head injury">Head injury</option>
+                        <option value="Comatose">Comatose</option>
+                        <option value="Medical request">Medical request</option>
+                        <option value="Other">Other</option>
+                    </select>
+                  </div>
+              </div>
+
+              <div *ngIf="selectedobservationtype == 'bristolstoolchart'">
+                <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='customMonitoringFrequency'" class="dropdown-selector" style="margin-left: 8px;" id="dropdownSelectorContainer">
+                      <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()" style="width: 260px;">
+                      <option value="null">Please select</option>
+                      <option value="Gut disorders">Gut disorders</option>
+                      <option value="Poor drinking / dehydration">Poor drinking / dehydration</option>
+                      <option value="Limited mobility">Limited mobility</option>
+                      <option value="Constipation">Constipation</option>
+                      <option value="Diarrhoea">Diarrhoea</option>
+                      <option value="Other">Other</option>
+                  </select>
+                </div>
+            </div>
+
+            <div *ngIf="selectedobservationtype == 'bloodglucosefrequency'">
+                <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='customMonitoringFrequency'" class="dropdown-selector"  style="margin-left: 8px;" id="dropdownSelectorContainer">
+                      <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()" style="width: 260px;">
+                      <option value="null">Please select</option>
+                      <option value="Medical Request">Medical Request</option>
+                      <option value="Other">Other</option>
+                  </select>
+                </div>
+            </div>
+
+            <div *ngIf="selectedobservationtype == 'heightWeightWaist'">
+                <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='customMonitoringFrequency'" class="dropdown-selector"  style="margin-left: 8px;" id="dropdownSelectorContainer">
+                      <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()" style="width: 260px;">
+                      <option value="null">Please select</option>
+                      <option value="Routine">Routine</option>
+                      <option value="Medication">Medication</option>
+                      <option value="Dehydration">Dehydration</option>
+                      <option value="Underweight">Underweight</option>
+                      <option value="Overweight">Overweight</option>
+                      <option value="Weight change">Weight change</option>
+                      <option value="Other">Other</option>
+                  </select>
+                </div>
+            </div>
+
+            <!-- <div *ngIf="selectedobservationtype != 'heightWeightWaist'">
+                <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='customMonitoringFrequency'" class="dropdown-selector"  style="margin-left: 8px;" id="dropdownSelectorContainer">
+                      <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()" style="width: 260px;">
+                      <option value="null">Please select</option>
+                      <option value="Routine">Routine</option>
+                      <option value="Medication">Medication</option>
+                      <option value="Dehydration">Dehydration</option>
+                      <option value="Other">Other</option>
+                  </select>
+                </div>
+            </div> -->
+              
+    
+              <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='pause'" class="dropdown-selector" id="dropdownSelectorContainer">
+                <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()">
+                    <option value="null">Please select</option>
+                    <option value="Patient on leave">Patient on leave</option>
+                    <option value="AWOL">AWOL</option>
+                    <option value="Other">Other</option>
+                </select>
+              </div>
+    
+              <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='stop'" class="dropdown-selector" id="dropdownSelectorContainer">
+                <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()"  style="width: 260px;">
+                    <option value="null" selected>Please select</option>
+                    <option value="Monitoring not clinically indicated">Monitoring not clinically indicated</option>
+                    <option value="Acute hospital ED">Acute hospital ED</option>
+                    <option value="Extended leave">Extended leave</option>
+                    <option value="AWOL">AWOL</option>
+                    <option value="Other">Other</option>
+                </select>
+              </div>  
+
+              <div [hidden]="obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='monitoringnotrequired'" class="dropdown-selector" id="dropdownSelectorContainer">
+                  <select formControlName="frequency_reason" class="form-control dropdown-parent" (change)="sendMonitoringFrequencyData()" style="width: 260px;">
+                      <option value="null" selected>Please select</option>
+                      <option value="Monitoring not clinically indicated">Monitoring not clinically indicated </option>
+                      <option value="Other">Other</option>
+                  </select>
+               </div> 
+              
+              <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_reason.invalid && (obsmonitoringfrequencyform['controls'].frequency_reason.dirty || obsmonitoringfrequencyform['controls'].frequency_reason.touched)"
+                  class="alert alert-danger">
+                  <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_reason.errors.unanswered">
+                        Frequency reason is required
+                  </div>
+              </div>
+    
+        </div>
+
+        <div *ngIf="(obsmonitoringfrequencyform['controls'].frequency_reason.value == 'Acute hospital ED' || obsmonitoringfrequencyform['controls'].frequency_reason.value == 'Extended leave' || obsmonitoringfrequencyform['controls'].frequency_reason.value == 'AWOL' || obsmonitoringfrequencyform['controls'].frequency_reason.value == 'Not appropriate for electronic EWS, alternative paper EWS chart in use') && (selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency')"  class="frame-group">
+            <div [ngClass]="(selectedobservationtype != 'news2frequency' && selectedobservationtype != 'pewsfrequency' && selectedobservationtype != 'mewsfrequency' && selectedobservationtype != 'marsifrequency') ? 'blood-glucose-parent': 'blood-glucose-parent2'">
+                  <div class="blood-glucose">
+                      <!-- <span>Monitoring frequency</span>
+                      <span style="color:red;"> *</span> -->
+                  </div>
+                  
+                  <!-- <div class="blood-glucose">:</div> -->
+            </div>
+            <div class="frame-container">
+                  <div class="frame-group">
+                    <span class="h5 ml-1">Observation stopped</span>
+                  </div>
+            </div>
+        </div>
+
+        <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_reason.value != 'null' && (obsmonitoringfrequencyform['controls'].frequency_reason.value != 'Acute hospital ED' && obsmonitoringfrequencyform['controls'].frequency_reason.value != 'Extended leave' && obsmonitoringfrequencyform['controls'].frequency_reason.value != 'AWOL' && obsmonitoringfrequencyform['controls'].frequency_reason.value != 'Not appropriate for electronic EWS, alternative paper EWS chart in use') && (selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency')"  class="frame-group">
+            <div [ngClass]="(selectedobservationtype != 'news2frequency' && selectedobservationtype != 'pewsfrequency' && selectedobservationtype != 'mewsfrequency' && selectedobservationtype != 'marsifrequency') ? 'blood-glucose-parent': 'blood-glucose-parent2'">
+                  <div class="blood-glucose">
+                      <span>Monitoring frequency</span>
+                      <span style="color:red;"> *</span>
+                  </div>
+                  
+                  <div class="blood-glucose"></div>
+            </div>
+            <div class="frame-container">
+                <!-- <div class="frame-container"> -->
+                    <!-- <div class="frame-group">
+                      <span class="h5 ml-1">NEWS2 Suggested frequency for score {{ latestNEWS2Score?.score}} : {{getFrequencyFromNEWS2Score(latestNEWS2Score)?.suggestedMonitoringFrequencyValue}} {{getFrequencyFromNEWS2Score(latestNEWS2Score)?.suggestedMonitoringFrequencyUnit}}</span>
+                    </div> -->
+                  <!-- </div> -->
+                  <div class="frame-group">
+                        <div class="radio-button">
+                              <input formControlName="monitoringFrequency" enterIsNext value="customMonitoringFrequency" type="radio" class="form-control radio-button-child" id="txtPositionStanding" (change)="monitoringFrequencyValueChanged()">
+                        </div>
+                        <div class="blood-glucose-prototype">
+                              <!-- <input type="text" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57" (change)="calculateMonitoringFrequency()"
+                              positiveNumberRange style="width: 80px;padding-right: 0px;padding-left: 0px;text-align: center;"
+                              formControlName="frequency_entered" enterIsNext class="form-control wrapper dropdown-parent"/> -->
+                              <div class="blood-glucose-prototype">
+                                <!-- <input type="text" inputmode="numeric" onkeypress="return event.charCode >= 48 && event.charCode <= 57" (change)="calculateMonitoringFrequency()"
+                                positiveNumberRange style="width: 80px;padding-right: 0px;padding-left: 0px;text-align: center;"
+                                formControlName="frequency_entered" enterIsNext class="wrapper"/> -->
+                                <div *ngIf="obsmonitoringfrequencyform['controls'].frequencyunit_entered.value=='min' || obsmonitoringfrequencyform['controls'].frequencyunit_entered.value=='null'" class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequency_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option>    
+                                          <option *ngFor="let min of minutes" value={{min.id}}>{{min.value}}</option>   
+                                          <!-- <option value="5">5</option>  
+                                          <option value="10">10</option>
+                                          <option value="15">15</option>
+                                          <option value="30">30</option>
+                                          <option value="60">60</option> -->
+                                    </select>
+                                </div>
+                                <div *ngIf="obsmonitoringfrequencyform['controls'].frequencyunit_entered.value=='hours'" class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequency_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option>  
+                                          <option *ngFor="let hour of hours" value={{hour.id}}>{{hour.value}}</option>    
+                                          <!-- <option value="1">1</option>  
+                                          <option value="2">2</option>
+                                          <option value="4">4</option>
+                                          <option value="6">6</option>
+                                          <option value="8">8</option>
+                                          <option value="12">12</option>
+                                          <option value="24">24</option> -->
+                                    </select>
+                                </div>
+                                <div *ngIf="obsmonitoringfrequencyform['controls'].frequencyunit_entered.value=='days'" class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequency_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                          <option value="null">Please Select</option>    
+                                          <option *ngFor="let day of days" value={{day.id}}>{{day.value}}</option>  
+                                          <!-- <option value="1">1</option>
+                                          <option value="2">2</option>
+                                          <option value="3">3</option>
+                                          <option value="4">4</option>
+                                          <option value="5">5</option>
+                                          <option value="6">6</option>
+                                          <option value="7">7</option> -->
+                                    </select>
+                                </div>
+                                <div class="dropdown-selector" id="dropdownSelectorContainer">
+                                    <select formControlName="frequencyunit_entered" class="form-control dropdown-parent" (change)="calculateMonitoringFrequency()">
+                                        <option value="null">Please Select</option>  
+                                        <option value="min">minutes</option>
+                                        <option value="hours">hours</option>
+                                        <option *ngIf="(selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency') && (obsmonitoringfrequencyform['controls'].frequency_reason.value=='Medical request' || obsmonitoringfrequencyform['controls'].frequency_reason.value=='Clinical judgement')" value="days">days</option>
+                                        <!-- <option *ngIf="selectedobservationtype != 'news2frequency'" value="days">days</option> -->
+                                        <!-- <option value="weeks">weeks</option> -->
+                                    </select>
+                                </div>
+                          </div>
+                              
+                        </div>
+                  </div>
+                  <!-- <div class="frame-container">
+                    <div class="frame-group">
+                      <span class="h5 ml-1">NEWS2 Suggested frequency for score {{this.latestNEWS2Score.score}}</span>
+                    </div>
+                  </div> -->
+                  <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.invalid && (obsmonitoringfrequencyform['controls'].frequency_entered.dirty || obsmonitoringfrequencyform['controls'].frequency_entered.touched)"
+                      class="text-danger">
+          
+                      <!-- <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.errors.required">
+                      Frequency is required
+                      </div> -->
+                      <!-- <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.errors.min">
+                      Frequency can be 0-60
+                      </div> -->
+                      <!-- <div *ngIf="obsmonitoringfrequencyform['controls'].frequency_entered.errors.max">
+                            Frequency cannot be greater than {{validationHours}} hours
+                      </div> -->
+          
+                </div>
+                  <div class="radio-button1" [hidden]="true">
+                        <input formControlName="monitoringFrequency" enterIsNext value="pause" type="radio" class="form-control radio-button-child" id="txtPause" (change)="monitoringFrequencyValueChanged()">
+                        <div class="radio-button2">Pause</div>
+                  </div>
+                  <div class="radio-button1"  [hidden]="(selectedobservationtype == 'news2frequency' || selectedobservationtype == 'pewsfrequency' || selectedobservationtype == 'mewsfrequency' || selectedobservationtype == 'marsifrequency')">
+                        <input  formControlName="monitoringFrequency" enterIsNext value="stop" type="radio" class="form-control radio-button-child" id="txtStop" (change)="monitoringFrequencyValueChanged()">
+                        <div class="radio-button2">Stop monitoring</div>
+                  </div>
+                  <div class="radio-button1" [hidden]="true">
+                      <input formControlName="monitoringFrequency" enterIsNext value="monitoringnotrequired" type="radio" class="form-control radio-button-child" id="txtmonitoringnotrequired" (change)="monitoringFrequencyValueChanged()">
+                      <div class="radio-button2">Regular monitoring not required</div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="reason-selector" [hidden]="showFrequencyReason && obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='pause' && obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='stop' && obsmonitoringfrequencyform['controls'].monitoringFrequency.value!='monitoringnotrequired'">
+            <div [ngClass]="(selectedobservationtype != 'news2frequency' && selectedobservationtype != 'pewsfrequency' && selectedobservationtype != 'mewsfrequency' && selectedobservationtype != 'marsifrequency') ? 'blood-glucose-parent': 'blood-glucose-parent2'">
+    
+            </div>
+            <div [hidden]="obsmonitoringfrequencyform['controls'].frequency_reason.value != 'Other'" class="dropdown-selector" id="dropdownSelectorContainer">
+                <textarea class="form-control" enterIsNext formControlName="frequency_reason_other" rows="5" cols="50" (change)="sendMonitoringFrequencyData()"  maxlength="900" style="width: 260px; min-height: 95px; max-height: 95px;margin-left: 8px;"></textarea>
+            </div>
+        </div>
+    </div>
+</form>

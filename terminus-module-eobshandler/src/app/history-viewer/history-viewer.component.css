@@ -1,0 +1,14 @@
+.strickout {
+    text-decoration: line-through;
+}
+
+.tooltip-history {
+    white-space: nowrap; 
+    width: 150px; 
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal{
+    backdrop-filter: brightness(0.5);
+}

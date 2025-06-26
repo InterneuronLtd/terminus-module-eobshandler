@@ -1,0 +1,329 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content modal-lg" >
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalCenterTitle">{{appService.GetChartType()}} Observation Monitoring Frequency : <span class="font-weight-bold h4">{{previouslyRecordedFrequency}}</span></h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="closeMonitoringFrequencyModal()">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div  style="overflow-y: auto;">
+                <div class="modal-body">
+                    <div class="frame-group">
+                        <div class="blood-glucose-parent" style="width: 100%;">
+                            <span class="blood-glucose" style="font-size: 1.05rem">Change Monitoring Frequency</span>&nbsp;
+                            <!-- <div class="blood-glucose">:</div> -->
+                             <img class="float-right" src="assets/images/additonal_guidance.svg" *ngIf="appService.AuthoriseAction('eobs_view_additionalguidance')" (click)="openAdditionalGuidanceModal()" />
+                        </div>
+                        <div class="frame-container">
+                            <div class="frame-group">
+                                <div class="radio-button">
+                                    <div class="blood-glucose" style="font-size: 18px;"></div>
+                                          <!-- <input formControlName="monitoringFrequency" enterIsNext value="customMonitoringFrequency" type="radio" class="radio-button-child" id="txtPositionStanding"> -->
+                                </div>
+                            </div>
+                        </div>
+                  </div>
+                <app-monitoring-frequency *ngIf="observationtype" [observationtype]="observationtype" [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData" (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+                <!-- <div class="frame-group">
+                    <div class="blood-glucose-parent">
+                        <div class="blood-glucose">Addition clinical guidance</div>
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <textarea class="form-control" enterIsNext maxlength="500" [(ngModel)]='additionalclinicalguidance' rows="5" cols="50"></textarea>
+                    </div>
+                </div>   -->
+                <hr>
+    
+                    <img src="assets/images/Table_icon.svg" height="25px"  (click)="viewHistory()"
+                        role="button"class="ml-2">
+    
+                    <img *ngIf="!messageSuccess && appService.AuthoriseAction('eobs_change_monitoring_freq')" src="assets/images/Tick Primary.svg" height="35px"  (click)="saveObsMonitoringFrequency()"
+                        class="float-right mr-3" role="button">
+    
+                    <div *ngIf="messageSuccess"  style="padding: 4px;" class="alert float-right alert-primary" role="alert">
+                        Monitoring Saved successfully.
+                    </div>
+
+                    <div *ngIf="messageError"  style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Error</span>
+                    </div>
+                    
+                    <div *ngIf="showError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Please fill in all the fields that are marked *</span>
+                    </div>
+    
+                    <div *ngIf="showValidate7DayError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Monitoring frequency cannot be greater than {{validationMaxHoursText}} {{validationMaxUnit}}</span>
+                    </div>
+    
+                </div>
+    
+                <div *ngIf="showHistoryModal" class="modal-body " style="max-height: 200px; width: 100%; overflow-y: auto; white-space: nowrap;">
+                   
+    
+                    <app-history-viewer [monitoringFrequencyHistoryData]="monitoringFrequencyHistoryData" [rowForHistoryViewer]="rowForHistoryViewer" (historyViewerOutput)="receivehistoryViewerData($event)"></app-history-viewer>
+    
+                </div>
+            </div>
+            
+
+            <!-- <div *ngIf="showError" class="col m-1" role="alert"></div>
+                <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please fill in all the fields that are marked *</span>
+            </div> -->
+
+           
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- <div *ngIf="showDeleteModal" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabeldelete">Delete Confirmation</h5>
+
+                </div>
+                <div class="modal-body">
+                    Are you sure that you want to delete the Observation Monitering Frequency? If so, Please provide
+                    reason. This cannot be undone.<br />
+                    <b>Reason:</b>
+                    <select class="form-control" [(ngModel)]='selectedObsMonitoringFrequency.reasonfordelete'
+                        id="ddlprescriptionindications">
+                        <option value="Entered in error">
+                            Entered in error</option>
+                        <option value="Recorded for the wrong patient">
+                            Recorded for the wrong patient</option>
+                    </select>
+                    <br />
+
+                </div>
+                <div class="modal-footer">
+                    <img style="width: 40px ; height: 30px;;" (click)="saveEditorDelete('Delete')" src="assets/images/Tick Secondary.svg" class="pull-right">
+                    <img src="assets/images/Cross Primary.svg" (click)="showDeleteModal=false;showEdit=true" height="32px"
+                        width="40px" class="pull-right" role="button">
+                </div>
+            </div>
+        </div>
+    </div> -->
+
+    <div *ngIf="showEditModal" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeledit" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabeledit">Edit Observation Monitoring Frequency</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" (click)="showEditModal=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                
+                <app-monitoring-frequency [observationtype]="observationtype" [defaultMonitoringFrequencyData]="editMonitoringFrequencyData" (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+                <br />
+                <b>Reason:</b>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="exampleRadios1" name='Reasonedit'
+                        value='Entered in error' [(ngModel)]='selectedObsMonitoringFrequency.reasonforamend' checked>
+                    <label class="form-check-label" for="exampleRadios1">
+                        Entered in error
+                    </label>
+                </div>
+                <br />
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" id="exampleRadios2" name='Reasonedit'
+                        value='Recorded for the wrong patient'
+                        [(ngModel)]='selectedObsMonitoringFrequency.reasonforamend'>
+                    <label class="form-check-label" for="exampleRadios2">
+                        Recorded for the wrong patient
+                    </label>
+                </div> <br />
+                <!-- <div class="form-check">
+                    <input class="form-check-input" type="radio" id="exampleRadios3" name='Reasonedit' value='Other'
+                        [(ngModel)]='selectedObsMonitoringFrequency.reasonforamend'>
+                    <label class="form-check-label" for="exampleRadios3">
+                        Other
+                    </label>
+                </div> <br />
+                <textarea *ngIf="selectedObsMonitoringFrequency.resonforchange == 'Other'" class="form-control"
+                    row="4" [(ngModel)]='OthereReason'></textarea> -->
+            </div>
+            <div *ngIf="showEditError" class="col" role="alert">
+                <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please fill in all the fields that are marked *</span>
+            </div>
+            <div class="modal-body">
+                <!-- <img class="pull-left" style="width: 40px ; height: 30px;;"
+                    src="assets/images/Delete.svg" (click)="showDeleteModal=true;showEditModal=false "> -->
+                <img src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right mr-3"
+                     role="button" (click)="saveEditorDelete('Edit')">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <div *ngIf="showEditHistory" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content modal-xl">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabeldelete">History</h5>
+                    <button type="button" class="close" (click)="showEditHistory=false">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height: 300px;overflow-y: auto;">
+
+                    <table class="table table-borderless">
+
+                        <tr style="background: #F0F4FF;text-align: center;">
+                            <th>Observation Time </th>
+                            <th>Monitoring Frequency</th>
+                            <th>Reason</th>
+                            <th>Completed By</th>
+                        </tr>
+                        <tr *ngFor="let Record of RecordHistory">
+
+                            <td style="text-align: center;">{{Record.datestarted | date: 'dd-MM-yyyy HH:mm'}}</td>
+                            <td style="text-align: center;">{{Record.frequency_entered}}</td>
+                            <td style="text-align: center;">{{Record.frequency_reason}}</td>
+                            <td style="text-align: center;">{{Record.addedby}}</td>
+                            
+                        </tr>
+
+
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div> -->
+
+    <!-- <button type="button" style="display:none" data-bs-toggle="modal" data-bs-target="#additionalGuidanceModal" #openAdditionalGuidance>Open Guidance</button> -->
+
+    <div class="modal fade show" id="additionalGuidanceModal" tabindex="-1" role="dialog"
+        aria-labelledby="additionalGuidanceLabel" aria-modal="true" *ngIf="showAdditionalGuidanceModal"
+        style="display: block;">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="additionalGuidanceLabel">Additional Clinical Guidance</h5>&nbsp;
+                    <img *ngIf="appService.AuthoriseAction('eobs_amend_additionalguidance') && showEditButton" style="height: 25px;"
+                        src="assets/images/Edit _Button_Small.svg" (click)="editAdditionalClinicalGuidance()">
+                    <button type="button" class="close" aria-label="Close" (click)="closeAdditionalClinicalGuidanceModal()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
+                    <div *ngIf="showEditButton">
+                        <span>{{historyData[0].guidance}}</span>
+                    </div>
+                    <div *ngIf="isAmend || historyData.length == 0 || (historyData.length > 0 && historyData[0].guidance == null || historyData[0].guidance == '')">
+                        <textarea rows="5" class="form-control" maxlength="500" [(ngModel)]="guidanceText"></textarea>
+                    </div>
+                    <br />
+                    <div>
+                        <img src="assets/images/Table_icon.svg" height="25px" role="button" class="float-left" (click)="showAdditionalClinicalGuidanceHistory()">
+                        <img style="width: 40px; height: 30px;" src="assets/images/Tick Primary.svg" class="float-right" 
+                        *ngIf="(appService.AuthoriseAction('eobs_add_additionalguidance') || appService.AuthoriseAction('eobs_amend_additionalguidance')) && (isAmend || historyData.length == 0 || (historyData.length > 0 && historyData[0].guidance == null || historyData[0].guidance == ''))" 
+                        (click)="saveAdditionalClinicalGuidance()">
+                    </div>
+                    <br />
+                    <div *ngIf="showHistory">
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-9">
+                                <b>History</b>
+                            </div>
+                            <div class="col-3">
+                                <input type="text" class="form-control" id="filter-date" name="filter-date" placeholder="Select Date"
+                                    bsDatepicker [(ngModel)]="Choosenfilterdate" (ngModelChange)="ChoosenfilterdateChange($event)"
+                                    [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY', containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers: false }"
+                                    autocomplete="off">
+                            </div>
+                        </div>
+                        <br />
+                        <div *ngIf="filteredData.length == 0">
+                            <div>
+                                <b>No history data available</b>
+                            </div>
+                        </div>
+                        <div *ngIf="filteredData.length > 0">
+                            <table class="table table-borderless">
+                                <tr style="background: #F0F4FF;text-align: left; padding-bottom: 0px;">
+                                    <th>Added</th>
+                                    <th>Additional clinical guidance</th>
+                                    <th>Amended by</th>
+                                </tr>
+                                <tr *ngFor="let history of filteredData">
+                                    <td>{{history._createddate | date: 'dd/MM/yyyy HH:mm'}}</td>
+                                    <td>{{history.guidance}}</td>
+                                    <td>{{history._createdby}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+      <!-- <div *ngIf="showAdditionalGuidanceModal" class="modal fade show" id="discardModal" tabindex="-1" role="dialog"
+      aria-labelledby="exampleModalLabeldiscardModal" style="display: block; padding-right: 17px;" aria-modal="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                  <h5 class="modal-title" id="exampleModalLabeldiscardModal">Discard Changes</h5>
+  
+              </div>
+              <div class="modal-body">
+                  Are you sure that you want to close? All the unsaved<br />  data entered will be lost if you continue.
+               
+                 
+                
+              </div>
+              <div class="modal-footer">
+                 
+                  <div>
+                      <img style="width: 40px ; height: 30px;;" (click)="showeModelditdiscard=false;closeBloodPressureModal()"
+                          src="assets/images/Tick Secondary.svg" class="float-right">
+                  </div>
+                  <img src="assets/images/Cross Primary.svg" (click)="showeModelditdiscard=false" height="32px"
+                      width="40px" class="float-right" role="button">
+  
+              </div>
+          </div>
+      </div>
+  </div> -->

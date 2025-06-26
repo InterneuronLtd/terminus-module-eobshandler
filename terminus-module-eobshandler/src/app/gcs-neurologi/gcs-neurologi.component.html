@@ -1,0 +1,1203 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5>Neurological Obs </h5>&nbsp; &nbsp;<span class="mr-1" *ngIf="GCSDetails && GCSDetails.length > 0"> Last GCS :
+                    <strong>
+                        {{GCSDetails[0].totalscore}} </strong> ({{GCSDetails[0].observationtime | date: 'dd/MM/yyyy
+                    HH:mm'}}) </span>
+                    <span class="h5 ml-1"> {{currentRecordedFrequencyAndReason}}</span>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeGCSModal()">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+                    <div *ngIf="!gcsobservations.patientrefused">
+                        <div class="row">
+                            <div class="col-12">
+
+                                <table style="width: 100%">
+                                    <tr>
+                                        <th>Eyes open</th>
+                                        <th style="padding: 10px">Best Verbal Response</th>
+                                        <th style="padding: 10px">Best Motor Response</th>
+                                    </tr>
+                                    <tr>
+                                        <td> <select class="form-control" id="eyesopen"
+                                                [(ngModel)]='gcsobservations.eyesvalue'>
+                                                <option value=null disabled selected><strong>Please Select </strong>
+                                                </option>
+                                                <option value="4">
+                                                    4 Spontaneous</option>
+                                                <option value="3">
+                                                    3 To Sound</option>
+                                                <option value="2">
+                                                    2 To Pressure</option>
+                                                <option value="1">
+                                                    1 None</option>
+                                                <option value="0">
+                                                    NT Not Testable</option>
+                                            </select>
+                                            <div *ngIf="showerror1" class="alert-danger col" role="alert">
+                                                <i class="fa fa-exclamation-triangle text-danger"
+                                                    aria-hidden="true"></i>Please answer all 3 GCS questions.
+                                            </div>
+                                        </td>
+                                        <td style="padding: 10px">
+                                            <select class="form-control" id="verbalresponce"
+                                                [(ngModel)]='gcsobservations.verbalvalue' placeholder="Select">
+                                                <option value=null disabled selected><strong>Please Select </strong>
+                                                </option>
+                                                <option value="5">
+                                                    5 Orientated</option>
+                                                <option value="4">
+                                                    4 Confused</option>
+                                                <option value="3">
+                                                    3 Words</option>
+                                                <option value="2">
+                                                    2 Sounds</option>
+                                                <option value="1">
+                                                    1 None</option>
+                                                <option value="0">
+                                                    NT Not Testable</option>
+                                            </select>
+                                            <div *ngIf="showerror2" class="alert-danger col" role="alert">
+                                                <i class="fa fa-exclamation-triangle text-danger"
+                                                    aria-hidden="true"></i>Please answer all 3 GCS questions.
+                                            </div>
+                                        </td>
+                                        <td style="padding: 10px">
+                                            <select class="form-control" id="Motorres"
+                                                [(ngModel)]='gcsobservations.motorvalue' placeholder="Select">
+                                                <option value=null disabled selected><strong>Please Select </strong>
+                                                </option>
+                                                <option value="6">
+                                                    6 Obey Commands</option>
+                                                <option value="5">
+                                                    5 Localising</option>
+                                                <option value="4">
+                                                    4 Normal Flexion</option>
+                                                <option value="3">
+                                                    3 Abnormal Flexion</option>
+                                                <option value="2">
+                                                    2 Extension</option>
+                                                <option value="1">
+                                                    1 None</option>
+                                                <option value="0">
+                                                    NT Not Testable</option>
+                                            </select>
+                                            <div *ngIf="showerror3" class="alert-danger col" role="alert">
+                                                <i class="fa fa-exclamation-triangle text-danger"
+                                                    aria-hidden="true"></i>Please answer all 3 GCS questions.
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+
+                        </div>
+                        <div *ngIf="Observationshowmore">
+                            <div class="col-12">
+
+                                <table style="width: 100%">
+                                    <tr>
+                                        <th>Pupil Right-Size&nbsp; <img src="assets/images/Info.svg" height="22px"
+                                                width="30px" (click)="showimg=true"></th>
+                                        <th style="padding: 10px">Pupil Right - Reaction</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="pupilrightsize"
+                                                [(ngModel)]='gcsobservations.pupilrightsize' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="8">
+                                                    8 mm</option>
+                                                <option value="7">
+                                                    7 mm</option>
+                                                <option value="6">
+                                                    6 mm</option>
+                                                <option value="5">
+                                                    5 mm</option>
+                                                <option value="4">
+                                                    4 mm</option>
+                                                <option value="3">
+                                                    3 mm</option>
+                                                <option value="2">
+                                                    2 mm</option>
+                                                <option value="1">
+                                                    1 mm</option>
+
+                                                <option value="0">
+                                                    Not Observable</option>
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="verbalresponce"
+                                                [(ngModel)]='gcsobservations.pupilrightreaction' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="+">
+                                                    +</option>
+                                                <option value="-">
+                                                    -</option>
+                                                <option value="NotTestable">
+                                                    Not Testable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+
+                                    <tr>
+                                        <th>Pupil left-Size&nbsp; <img src="assets/images/Info.svg" height="22px"
+                                                width="30px" (click)="showimg=true"></th>
+                                        <th style="padding: 10px">Pupil left - Reaction</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="pupilleftsize"
+                                                [(ngModel)]='gcsobservations.pupilleftsize' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="8">
+                                                    8 mm</option>
+                                                <option value="7">
+                                                    7 mm</option>
+                                                <option value="6">
+                                                    6 mm</option>
+                                                <option value="5">
+                                                    5 mm</option>
+                                                <option value="4">
+                                                    4 mm</option>
+                                                <option value="3">
+                                                    3 mm</option>
+                                                <option value="2">
+                                                    2 mm</option>
+                                                <option value="1">
+                                                    1 mm</option>
+
+                                                <option value="0">
+                                                    Not Observable</option>
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="pupilleftreaction"
+                                                [(ngModel)]='gcsobservations.pupilleftreaction' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="+">
+                                                    +</option>
+                                                <option value="-">
+                                                    -</option>
+                                                <option value="NotTestable">
+                                                    Not Testable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+                                    <tr>
+                                        <th>Limb Movement - Left Arm</th>
+                                        <th style="padding: 10px">Limb Movement - Right Arm</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="limbleftarm"
+                                                [(ngModel)]='gcsobservations.limbleftarm' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="Normal power">
+                                                    Normal power</option>
+                                                <option value=" Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="limbrightarm"
+                                                [(ngModel)]='gcsobservations.limbrightarm' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value=" Normal power">
+                                                    Normal power</option>
+                                                <option value="Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+                                    <tr>
+                                        <th>Limb Movement - Left Leg</th>
+                                        <th style="padding: 10px">Limb Movement - Right Leg</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="limbleftleg"
+                                                [(ngModel)]='gcsobservations.limbleftleg' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="Normal power">
+                                                    Normal power</option>
+                                                <option value="Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="limbrightleg"
+                                                [(ngModel)]='gcsobservations.limbrightleg' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="Normal power">
+                                                    Normal power</option>
+                                                <option value="Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+
+                                <button *ngIf="!Observationshowmore" class="btn btn-outline-primary float-right"
+                                    type="button" (click)="Observationshowmore = !Observationshowmore"
+                                    >More Observations</button>
+                                <button *ngIf="Observationshowmore" class="btn btn-outline-primary float-right"
+                                    type="button"  (click)="Observationshowmore = !Observationshowmore"
+                                    >Less Observation</button>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+
+                            <app-monitoring-frequency [observationtype]="observationtype"
+                                [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                                (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+                        </div>
+                        <div class="col">
+                            <h6 style="margin-bottom: 34px;"> Date</h6>
+
+                            <input class="form-control" id="date-of-birth" name="date-of-birth" type="text"
+                                placeholder="Select Date" bsDatepicker [(ngModel)]="Choosenfilterdate"
+                                [bsConfig]="{showWeekNumbers:false, dateInputFormat: 'DD-MM-YYYY', containerClass:'theme-default' }"
+                                [maxDate]="today" [minDate]="mindate" autocomplete="off">
+                        </div>
+                        <div class="col">
+                            <h6> Observation Time</h6>
+
+                            <timepicker [minuteStep]="1" [(ngModel)]="Choosenfilterdate" [min]="minTime" [max]="maxTime"
+                                [showMeridian]="false">
+                            </timepicker>
+                        </div>
+
+
+                    </div>
+                    <div *ngIf="RBACK_PatientRefuse">
+                        <label *ngIf="showpatientrefuselink" (click)="showpatientrefuselink=false"
+                            style="color: #007bff;">Patient Refused?</label><br />
+                        <div *ngIf="!showpatientrefuselink" class="form-check">
+                            <input [(ngModel)]='gcsobservations.patientrefused' (ngModelChange)="patientrefuseChange()"
+                                type="checkbox" class="form-check-input" id="chkpatientrefusedgcs">
+                            <label class="form-check-label" for="chkpatientrefusedgcs">Patient Refused</label>
+                        </div>
+
+                        <div *ngIf="gcsobservations.patientrefused">
+                            <br />
+                            <strong class="form-check-label">Reason for Refusal</strong><span style="color:red;">
+                                *</span>
+                            <textarea class="form-control" row="5" maxlength="800"
+                                [(ngModel)]='gcsobservations.reasonforpatientrefused'></textarea>
+
+
+                        </div>
+                    </div>
+                    <hr>
+
+                    <img src="assets/images/Table_icon.svg" height="25px" 
+                        (click)="ShowHistory=!ShowHistory" role="button" class="ml-1">
+                    <img src="assets/images/Graph_icon.svg" height="25px" (click)="showGraph=true" class="ml-3"
+                        role="button">
+                    <img *ngIf="!messageSuccess && RBACK_Add" (click)="SaveObsevation()"
+                        src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right"
+                        role="button">
+                    <div *ngIf="messageSuccess" style="padding: 4px;" class="alert float-right alert-primary"
+                        role="alert">
+                        Observation Saved Successfully.
+                    </div>
+                    <div *ngIf="showError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;
+                        <span class="text-danger">{{showErrormessage}}</span>
+                    </div>
+                    <div *ngIf="showValidate7DayError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Monitoring frequency cannot be greater than 7 days</span>
+                    </div>
+                </div>
+                <div class="modal-body " *ngIf="ShowHistory">
+
+
+                    <div style=" width: 100%;  white-space: nowrap;">
+
+                        <!-- <app-history-viewer [monitoringFrequencyHistoryData]="monitoringFrequencyHistoryData"
+                            [rowForHistoryViewer]="rowForHistoryViewer"
+                            (historyViewerOutput)="receivehistoryViewerData($event)"></app-history-viewer> -->
+                            <div style="max-height: 300px;overflow-y: auto;">
+
+                                <table class="table">
+                                    <tr style="background: #F0F4FF;">
+                                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                                        <th colspan="6" style="text-align: center; padding-bottom: 0px; border-left: ridge;">Coma Scale</th>
+                                        <th colspan="4" style="text-align: center; padding-bottom: 0px; border-left: ridge;">Pupils</th>
+                                        <th colspan="4" style="text-align: center; padding-bottom: 0px; border-left: ridge; border-right: ridge;">Limbs</th>
+                                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                                    </tr>
+                
+                                    <tr style="background: #F0F4FF;text-align: center;">
+                
+                                        <th>Observation Time</th>
+                                        <th style=" border-left: ridge;">Total Score</th>
+                                        <th>Monitoring Frequency</th>
+                                        <th>Partial</th>
+                                        <th>Eyes</th>
+                                        <th>Verbal</th>
+                                        <th>Motor</th>
+                                        <th style=" border-left: ridge;">Right Size</th>
+                                        <th>Right Reaction</th>
+                                        <th>Left Size</th>
+                                        <th>Left Reaction</th>
+                                        <th style=" border-left: ridge;">Left Arm</th>
+                                        <th>Right Arm</th>
+                                        <th>Left Leg</th>
+                                        <th>Right Leg</th>
+                                        <th style=" border-left: ridge;">Reason</th>
+                                        <th>Recorded By</th>
+                                        <th>Submitted Time</th>
+                                        <th>Reason for Refusal</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr *ngFor="let Record of GCSDetails" [ngClass]="{'strickout': Record.isdeleted}">
+                
+                
+                                        <td style="text-align: center;"> {{Record.observationtime | date: 'dd/MM/yyyy
+                                            HH:mm'}}{{Record.isdeleted}}</td>
+                                        <td style="text-align: center;  border-left: ridge;">{{Record.totalscore}}</td>
+                                        <td style="text-align: center; "  *ngIf="Record.monitoringnotrequired">Monitoring Stopped</td>
+                                        <td style="text-align: center; "  *ngIf="!Record.monitoringnotrequired">{{Record.frequencyentered}} {{ Record.frequencyunit}}</td>
+                                        <td style="text-align: center;">Yes</td>
+                
+                                        <td style="text-align: center;">{{Record.eyes}}</td>
+                                        <td style="text-align: center;">{{Record.verbal}}</td>
+                                        <td style="text-align: center;">{{Record.motor}}</td>
+                                     
+                                        <td *ngIf="!Record.patientrefused"  style="text-align: center;  border-left: ridge;">{{Record.pupilrightsize}}</td>
+                                        <td  *ngIf="Record.patientrefused"  style="text-align: center;  border-left: ridge;">N/A</td>
+                                        <td  *ngIf="!Record.patientrefused"  style="text-align: center;">{{Record.pupilrightreaction}}</td>
+                                        <td   *ngIf="Record.patientrefused" style="text-align: center;">N/A</td>
+                                        <td  *ngIf="!Record.patientrefused"  style="text-align: center;">{{Record.pupilleftsize}}</td>
+                                        <td  *ngIf="Record.patientrefused"  style="text-align: center;">N/A</td>
+                                        <td *ngIf="!Record.patientrefused"  style="text-align: center;">{{Record.pupilleftreaction}}</td>
+                                        <td  *ngIf="Record.patientrefused"  style="text-align: center;">N/A</td>
+                                        <td  *ngIf="!Record.patientrefused"  style="text-align: center;  border-left: ridge;">{{Record.limbleftarm}}</td>
+                                        <td  *ngIf="Record.patientrefused"  style="text-align: center;  border-left: ridge;">N/A</td>
+                                        <td  *ngIf="!Record.patientrefused"  style="text-align: center;">{{Record.limbrightarm}}</td>
+                                        <td  *ngIf="Record.patientrefused"  style="text-align: center;">N/A</td>
+                                        <td  *ngIf="!Record.patientrefused"  style="text-align: center;">{{Record.limbleftleg}}</td>
+                                        <td  *ngIf="Record.patientrefused"  style="text-align: center;">N/A</td>
+                                        <td  *ngIf="!Record.patientrefused"  style="text-align: center;">{{Record.limbrightleg}}</td>
+                                        <td  *ngIf="Record.patientrefused"  style="text-align: center;">N/A</td>
+                                        <td  *ngIf="Record.monitoringreason == 'Other'" style="text-align: center;  border-left: ridge;">
+                                            <div class="tooltip-history">
+                
+                                                <a href="javascript:void(0)"
+                                                    (click)="showReasonAlert(Record.monitoringreasonother)">{{Record.monitoringreasonother}}</a>
+                                            </div>                                         
+                                        
+                                        </td>
+                                        <td  *ngIf="Record.monitoringreason != 'Other'" style="text-align: center;  border-left: ridge;">
+                                         
+                                            <div class="tooltip-history">
+                
+                                                <a href="javascript:void(0)"
+                                                    (click)="showReasonAlert(Record.monitoringreason)">{{Record.monitoringreason}}</a>
+                                            </div> 
+                                        
+                                        </td>
+                                        <td style="text-align: center;">{{Record.completedby}}</td>
+                                        <td style="text-align: center;">{{Record.submittedtime | date: 'dd/MM/yyyy HH:mm'}}</td>
+                                        <td style="text-align: center;">
+                                            <div class="tooltip-history">
+                
+                                                <a href="javascript:void(0)"
+                                                    (click)="showReasonAlert(Record.reasonforpatientrefused)">{{Record.reasonforpatientrefused}}</a>
+                                            </div>
+                                        </td> 
+                                        <td> <img *ngIf="Record.isamended == true" style="width: 20px ; height: 20px;;" src="assets/images/history.svg" (click)="receivehistoryViewerData(Record,'showHistory')">
+                                            <img *ngIf="Record.isdeleted != true && RBACK_Edit" style="width: 30px ; height: 30px;;" src="assets/images/Edit _Button_Small.svg" (click)="receivehistoryViewerData(Record,'showEdit')">
+                                        </td>
+                
+                
+                                    </tr>
+                
+                
+                
+                                </table>
+                            </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div *ngIf="showEdit" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeledit" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalCenterTitle"> Edit Neurological Obs</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="showEdit=false;showEditValidate7DayError=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+                    <table style="width: 100%">
+                        <tr>
+
+                            <th style="padding: 10px">Observation
+                                Time:{{selectedgcsobservations.observationtime | date: 'dd/MM/yyyy
+                                HH:mm'}}</th>
+                        </tr>
+                    </table>
+                    <div *ngIf="!selectedgcsobservations.patientrefused">
+                        <div class="row">
+                            <div class="col-12">
+
+                                <table style="width: 100%">
+
+                                    <tr>
+                                        <th>Eyes open</th>
+                                        <th style="padding: 10px">Best Verbal Response</th>
+                                        <th style="padding: 10px">Best Motor Response</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="eyesopen"
+                                                [(ngModel)]='selectedgcsobservations.eyesvalue' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="4">
+                                                    4 Spontaneous</option>
+                                                <option value="3">
+                                                    3 To Sound</option>
+                                                <option value="2">
+                                                    2 To Pressure</option>
+                                                <option value="1">
+                                                    1 None</option>
+                                                <option value="0">
+                                                    NT Not Testable</option>
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="verbalvalue"
+                                                [(ngModel)]='selectedgcsobservations.verbalvalue' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="5">
+                                                    5 Orientated</option>
+                                                <option value="4">
+                                                    4 Confused</option>
+                                                <option value="3">
+                                                    3 Words</option>
+                                                <option value="2">
+                                                    2 Sounds</option>
+                                                <option value="1">
+                                                    1 None</option>
+                                                <option value="0">
+                                                    NT Not Testable</option>
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="Motorres"
+                                                [(ngModel)]='selectedgcsobservations.motorvalue' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="6">
+                                                    6 Obey Commands</option>
+                                                <option value="5">
+                                                    5 Localising</option>
+                                                <option value="4">
+                                                    4 Normal Flexion</option>
+                                                <option value="3">
+                                                    3 Abnormal Flexion</option>
+                                                <option value="2">
+                                                    2 Extension</option>
+                                                <option value="1">
+                                                    1 None</option>
+                                                <option value="0">
+                                                    NT Not Testable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+
+                                </table>
+                            </div>
+
+                        </div>
+                        <div  *ngIf="editObservationshowmore">
+                            <div class="col-12">
+
+                                <table style="width: 100%">
+
+                                    <tr>
+                                        <th>Pupil Right-Size &nbsp; <img src="assets/images/Info.svg" height="22px"
+                                                width="30px" (click)="showimg=true"></th>
+                                        <th style="padding: 10px">Pupil Right - Reaction</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="pupilrightsize"
+                                                [(ngModel)]='selectedgcsobservations.pupilrightsize'
+                                                placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="8">
+                                                    8 mm</option>
+                                                <option value="7">
+                                                    7 mm</option>
+                                                <option value="6">
+                                                    6 mm</option>
+                                                <option value="5">
+                                                    5 mm</option>
+                                                <option value="4">
+                                                    4 mm</option>
+                                                <option value="3">
+                                                    3 mm</option>
+                                                <option value="2">
+                                                    2 mm</option>
+                                                <option value="1">
+                                                    1 mm</option>
+
+                                                <option value="0">
+                                                    Not Observable</option>
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="pupilrightreaction"
+                                                [(ngModel)]='selectedgcsobservations.pupilrightreaction'
+                                                placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="+">
+                                                    +</option>
+                                                <option value="-">
+                                                    -</option>
+                                                <option value="NotTestable">
+                                                    Not Testable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+                                    <tr>
+                                        <th>Pupil left-Size &nbsp; <img src="assets/images/Info.svg" height="22px"
+                                                width="30px" (click)="showimg=true"></th>
+                                        <th style="padding: 10px">Pupil left - Reaction</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="pupilleftsize"
+                                                [(ngModel)]='selectedgcsobservations.pupilleftsize'
+                                                placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="8">
+                                                    8 mm</option>
+                                                <option value="7">
+                                                    7 mm</option>
+                                                <option value="6">
+                                                    6 mm</option>
+                                                <option value="5">
+                                                    5 mm</option>
+                                                <option value="4">
+                                                    4 mm</option>
+                                                <option value="3">
+                                                    3 mm</option>
+                                                <option value="2">
+                                                    2 mm</option>
+                                                <option value="1">
+                                                    1 mm</option>
+
+                                                <option value="0">
+                                                    Not Observable</option>
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="verbalresponce"
+                                                [(ngModel)]='selectedgcsobservations.pupilleftreaction'
+                                                placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="+">
+                                                    +</option>
+                                                <option value="-">
+                                                    -</option>
+                                                <option value="NotTestable">
+                                                    Not Testable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+                                    <tr>
+                                        <th>Limb Movement - Left Arm</th>
+                                        <th style="padding: 10px">Limb Movement - Right Arm</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="limbleftarm"
+                                                [(ngModel)]='selectedgcsobservations.limbleftarm' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="Normal power">
+                                                    Normal power</option>
+                                                <option value="Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="limbrightarm"
+                                                [(ngModel)]='selectedgcsobservations.limbrightarm' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="Normal power">
+                                                    Normal power</option>
+                                                <option value="Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                    <!-- ----------------------------------------------------------------------------------------------------------------------------------------------- -->
+                                    <tr>
+                                        <th>Limb Movement - Left Leg</th>
+                                        <th style="padding: 10px">Limb Movement - Right Leg</th>
+                                    </tr>
+                                    <tr>
+                                        <th> <select class="form-control" id="limbleftleg"
+                                                [(ngModel)]='selectedgcsobservations.limbleftleg' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="Normal power">
+                                                    Normal power</option>
+                                                <option value="Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+
+                                            </select>
+                                        </th>
+                                        <th style="padding: 10px">
+                                            <select class="form-control" id="limbrightleg"
+                                                [(ngModel)]='selectedgcsobservations.limbrightleg' placeholder="Select">
+                                                <option value=null disabled selected>Please Select </option>
+                                                <option value="Normal power">
+                                                    Normal power</option>
+                                                <option value="Mild weakness">
+                                                    Mild weakness</option>
+                                                <option value="Severe weakness">
+                                                    Severe weakness</option>
+                                                <option value="Spastic flexion">
+                                                    Spastic flexion</option>
+                                                <option value="Extension">
+                                                    Extension</option>
+                                                <option value="No response">
+                                                    No response</option>
+                                                <option value="Not observable">
+                                                    Not observable</option>
+                                            </select>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+
+                                <button *ngIf="!editObservationshowmore" class="btn btn-outline-primary float-right"
+                                type="button" (click)="editObservationshowmore = !editObservationshowmore"
+                               >More Observations</button>
+                            <button *ngIf="editObservationshowmore" class="btn btn-outline-primary float-right"
+                                type="button"  (click)="editObservationshowmore = !editObservationshowmore"
+                               >Less Observation</button>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="row">
+                        <div class="col" *ngIf="LatestRecordSelected">
+
+                            <app-monitoring-frequency [observationtype]="observationtype"
+                                [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                                (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+                        </div>
+
+
+                    </div>
+                    <div *ngIf="!selectedgcsobservations.patientrefused">
+                        <br />
+                        <b>Reason:</b>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="exampleRadios1" name='Reasonedit'
+                                value='Entered in error' [(ngModel)]='selectedgcsobservations.reasonforamend' checked>
+                            <label class="form-check-label" for="exampleRadios1">
+                                Entered in error
+                            </label>
+                        </div>
+                        <br />
+                        <!-- <div class="form-check">
+                            <input class="form-check-input" type="radio" id="exampleRadios2" name='Reasonedit'
+                                value='Recorded for the wrong patient'
+                                [(ngModel)]='selectedgcsobservations.reasonforamend'>
+                            <label class="form-check-label" for="exampleRadios2">
+                                Recorded for the wrong patient
+                            </label>
+                        </div> <br /> -->
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="exampleRadios3" name='Reasonedit'
+                                value='Other' [(ngModel)]='selectedgcsobservations.reasonforamend'>
+                            <label class="form-check-label" for="exampleRadios3">
+                                Other
+                            </label>
+                        </div> <br />
+                        <textarea *ngIf="selectedgcsobservations.reasonforamend  == 'Other'" class="form-control"
+                            maxlength="800" row="4"
+                            [(ngModel)]='selectedgcsobservations.reasonforamendother'></textarea>
+
+                    </div>
+                    <div *ngIf="RBACK_PatientRefuse">
+                        <div class="form-check">
+                            <input [(ngModel)]='selectedgcsobservations.patientrefused'
+                                (ngModelChange)="patientrefuseChange()" type="checkbox" class="form-check-input"
+                                id="editchkpatientrefused">
+                            <label class="form-check-label" for="editchkpatientrefused">Patient Refused</label>
+                        </div>
+
+                        <div *ngIf="selectedgcsobservations.patientrefused">
+                            <br />
+                            <strong class="form-check-label">Reason for Refusal</strong><span style="color:red;">
+                                *</span>
+                            <textarea class="form-control" row="5"
+                                [(ngModel)]='selectedgcsobservations.reasonforpatientrefused'
+                                maxlength="800"></textarea>
+
+
+                        </div>
+                    </div>
+                    <hr>
+
+
+                </div>
+                <div class="modal-body">
+
+                    <img style="width: 40px ; height: 30px;;" (click)="showDelete=true;showEdit=false "
+                        *ngIf="RBACK_Delete" src="assets/images/Delete.svg">
+
+                    <img src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right"
+                        *ngIf="RBACK_Edit" (click)="saveEditorDelete('Edit')" role="button">
+                    <div *ngIf="editshowError" style="padding: 4px;" class="alert float-right alert-danger"
+                        role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;
+                        <span class="text-danger">{{EditshowErrormessage}}</span>
+                    </div>
+                    <div *ngIf="showEditValidate7DayError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Monitoring frequency cannot be greater than 7 days</span>
+                    </div>
+                </div>
+                <br />
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="showDelete" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">Delete Confirmation</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to delete the GCS and Neurological Obs?<br />  Please provide
+                reason.<br />
+                <b>Reason:</b>
+                <!-- <select  >
+        <option [value]="Entered in error"> Entered in error</option>
+        <option [value]="Recorded for the wrong patient">Recorded for the wrong patient</option>
+    </select> -->
+                <select class="form-control" [(ngModel)]='selectedgcsobservations.reasonforamend'
+                    id="ddlprescriptionindications">
+                    <option value="Entered in error">
+                        Entered in error</option>
+                    <option value="Recorded for the wrong patient">
+                        Recorded for the wrong patient</option>
+                    <option value="Other">
+                        Other</option>
+                </select>
+                <br />
+
+                <textarea *ngIf="selectedgcsobservations.reasonforamend == 'Other'" class="form-control" row="4"
+                    maxlength="800" [(ngModel)]='selectedgcsobservations.reasonforamendother'></textarea>
+
+            </div>
+            <div class="modal-footer">
+                <div *ngIf="editshowError" style="padding: 4px;margin-top: 16px;" class="alert float-right alert-danger"
+                    role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;
+                    <span class="text-danger">{{EditshowErrormessage}}</span>
+                </div>
+                <img style="width: 40px ; height: 30px;;" (click)="saveEditorDelete('Delete')" *ngIf="RBACK_Delete"
+                    src="assets/images/Tick Secondary.svg" class="float-right">
+                <img src="assets/images/Cross Primary.svg" (click)="DeleteCancelClick()" height="32px"
+                    width="40px" class="float-right" role="button">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div *ngIf="showEditHistory" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">History</h5>
+                <button type="button" class="close" (click)="showEditHistory=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 300px;overflow-y: auto;">
+
+                <table class="table ">
+                    <tr style="background: #F0F4FF;">
+                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                        <th colspan="6" style="text-align: center; padding-bottom: 0px; border-left: ridge;">Coma Scale</th>
+                        <th colspan="4" style="text-align: center; padding-bottom: 0px; border-left: ridge;">Pupils</th>
+                        <th colspan="4" style="text-align: center; padding-bottom: 0px; border-left: ridge; border-right: ridge;">Limbs</th>
+                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                        <th style="text-align: center; padding-bottom: 0px;"></th>
+                        
+                    </tr>
+                    <tr style="background: #F0F4FF;text-align: center;">
+
+                        <th>Observation Time</th>
+                        <th style=" border-left: ridge;">Total Score</th>
+                        <th>Monitoring Frequency</th>
+                        <th>Partial</th>
+                        <th>Eyes</th>
+                        <th>Verbal</th>
+                        <th>Motor</th>
+                        <th style=" border-left: ridge;">Right Size</th>
+                        <th>Right Reaction</th>
+                        <th>Left Size</th>
+                        <th>Left Reaction</th>
+                        <th style=" border-left: ridge;">Left Arm</th>
+                        <th>Right Arm</th>
+                        <th>Left Leg</th>
+                        <th>Right Leg</th>
+                        <th style=" border-left: ridge;">Reason</th>
+                        <th>Amended By</th>
+                        <th>Date/Time</th>
+                        <th>Reason for Edit/Delete</th>
+                        <th>Reason for Refusal</th>
+                    </tr>
+                    <tr *ngFor="let Record of RecordHistory">
+
+
+                        <td style="text-align: center;"> {{Record.observationtime | date: 'dd/MM/yyyy
+                            HH:mm'}}{{Record.isdeleted}}</td>
+                        <td style="text-align: center; border-left: ridge;">{{Record.totalscore}}</td>
+                        <td style="text-align: center; "  *ngIf="Record.monitoringnotrequired">Monitoring Stopped</td>
+                        <td style="text-align: center; "  *ngIf="!Record.monitoringnotrequired">{{Record.frequencyentered}} {{ Record.frequencyunit}}</td>
+                        <td style="text-align: center;">Yes</td>
+
+                        <td style="text-align: center;">{{Record.eyes}}</td>
+                        <td style="text-align: center;">{{Record.verbal}}</td>
+                        <td style="text-align: center;">{{Record.motor}}</td>
+                        <td style="text-align: center; border-left: ridge;">{{Record.pupilrightsize}}</td>
+                        <td style="text-align: center;">{{Record.pupilrightreaction}}</td>
+                        <td style="text-align: center;">{{Record.pupilleftsize}}</td>
+                        <td style="text-align: center;">{{Record.pupilleftreaction}}</td>
+                        <td style="text-align: center; border-left: ridge;">{{Record.limbleftarm}}</td>
+                        <td style="text-align: center;">{{Record.limbrightarm}}</td>
+                        <td style="text-align: center;">{{Record.limbleftleg}}</td>
+                        <td style="text-align: center;">{{Record.limbrightleg}}</td>
+                        <td  *ngIf="Record.monitoringreason == 'Other'" style="text-align: center;  border-left: ridge;">
+                            <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                    (click)="showReasonAlert(Record.monitoringreasonother)">{{Record.monitoringreasonother}}</a>
+                            </div>
+                         
+                        
+                        </td>
+                        <td  *ngIf="Record.monitoringreason != 'Other'" style="text-align: center;  border-left: ridge;">
+                         
+                            <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                    (click)="showReasonAlert(Record.monitoringreason)">{{Record.monitoringreason}}</a>
+                            </div>
+                        
+                        </td>
+                        <td  *ngIf="Record.isamended && !Record.isdeleted" style="text-align: center;">Edited By {{Record.completedby}}</td>
+                        <td  *ngIf="Record.isamended && Record.isdeleted" style="text-align: center;">Deleted By {{Record.completedby}}</td>
+                        <td  *ngIf="!Record.isamended && !Record.isdeleted" style="text-align: center;"> Created By {{Record.completedby}}</td>
+                        <td style="text-align: center;">{{Record.submittedtime | date: 'dd/MM/yyyy HH:mm'}}</td>
+                        <td *ngIf="Record.reasonforamend != 'Other'" style="text-align: center;">{{Record.reasonforamend}}</td>
+                        <td *ngIf="Record.reasonforamend == 'Other'" style="text-align: center;">{{Record.reasonforamendother}}</td>
+                        <td style="text-align: center;">
+                            <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                    (click)="showReasonAlert(Record.reasonforpatientrefused)">{{Record.reasonforpatientrefused}}</a>
+                            </div>
+                        </td>
+
+
+                    </tr>
+
+
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showimg" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="img"
+    style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px; position: relative; display: flex; flex-direction: column;">
+                <div style="margin-right: 30px;">
+                    <strong>Pupil Size Reference Chart</strong>
+                </div>
+                <div class="small" style="font-size: 12px; color: #666;">
+                    (As a guide only. Actual pupil size may differ from the chart)
+                </div>
+                <button type="button" class="close" (click)="showimg=false" 
+                        style="position: absolute; right: 10px; top: 10px;">
+                    <span aria-hidden="true">×</span>
+                </button>               
+            </div>
+            <div class="modal-body">
+
+                <img (click)="SaveObsevation()" src="assets/images/pupilsize.svg" style="width:95%" class="float-right"
+                    role="button">
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal -->
+<div [hidden]="!showGraph" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content modal-xl">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+
+                <button type="button" class="close" (click)="showGraph=false">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto;">
+                <h3 class="modal-title" id="exampleModalLabel">GCS</h3>
+                <div #visualization id="visualization"></div>
+
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 id="visualizationEyesLabel1">Eyes</h3>
+
+
+                <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        4 Spontaneous</li>
+                    <li style="margin-right: 20px;">
+                        3 To Sound</li>
+                    <li style="margin-right: 20px;">
+                        2 To Pressure</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul>
+
+
+                <div #visualizationEyes id="visualizationEyes"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 class="modal-title" id="visualizationEyesLabel2">Verbal</h3>
+
+                <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        5 Orientated</li>
+                    <li style="margin-right: 20px;">
+                        4 Confused</li>
+                    <li style="margin-right: 20px;">
+                        3 Words</li>
+                    <li style="margin-right: 20px;">
+                        2 Sounds</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul>
+
+
+                <div #visualizationVerbal id="visualizationVerbal"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <br>
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+                <h3 class="modal-title" id="visualizationEyesLabel3">Motor</h3>
+
+                <ul style="list-style-position: inside; padding: 0; display: flex; flex-wrap: wrap;">
+                    <li style="margin-right: 20px;">
+                        6 Obey Commands</li>
+                    <li style="margin-right: 20px;">
+                        5 Localising</li>
+                    <li style="margin-right: 20px;">
+                        4 Normal Flexion</li>
+                    <li style="margin-right: 20px;">
+                        3 Abnormal Flexion</li>
+                    <li style="margin-right: 20px;">
+                        2 Extension</li>
+                    <li style="margin-right: 20px;">
+                        1 None</li>
+                    <li style="margin-right: 20px;">
+                        Not Testable</li>
+                </ul>
+
+
+                <div #visualizationMotot id="visualizationMotot"></div>
+
+                <!-- ----------------------------------------------------------------------------------------------------------------- -->
+
+
+
+
+                <div class="mt-3 mb-n2 float-right">
+                    <span><i class="mr-3 fa-sharp fa-solid fa-magnifying-glass-minus" style="font-size:38px;"
+                            (click)="zoomOut()"></i></span>
+                    <span><i class="fa-sharp fa-solid fa-magnifying-glass-plus" style="font-size:38px;"
+                            (click)="zoomIn()"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

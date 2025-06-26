@@ -1,0 +1,592 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div class="modal fade" id="foodAndFluidModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="foodAndFluidLabel">Food and Fluid{{monitoringFrequencyLbl}}{{monitoringFrequencyReasonLbl}}</h5>
+                <button type="button" class="close" aria-label="Close" (click)="hideFormModalOnClose()">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+                    <form [formGroup]="form" (ngSubmit)="submit()">
+                        <label class="pl-2" style="font-weight: 600;">Food Item</label>
+                        <div formArrayName="foodControls">
+                            <div *ngFor="let control of foodControls.controls; let i = index" [formGroupName]="i">
+                                <div class="row p-2 mr-1">
+                                    <div class="col-9 col-md-8">
+                                        <input type="text" class="form-control" formControlName="foodItemValue" />
+                                        <!-- <div *ngIf="isSubmitted && control.get('foodItemValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                    <div class="col-2 col-md-3">
+                                        <select class="form-control" formControlName="foodItemConsumedValue">
+                                            <option *ngFor="let option of foodItemDropdownOptions" [value]="option.id">
+                                                {{ option.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-1 col-md-1">
+                                        <button type="button" class="btn border-0" (click)="removeFoodControl(i)">
+                                            <img style="height: 25px;" src="assets/images/dash.svg">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn border-0" (click)="addFoodControl()">
+                                <img style="height: 25px;" src="assets/images/plus-square.svg">
+                            </button>
+                        </div>
+                        <label class="pl-2 mt-2" style="font-weight: 600;">Fluid Description (Oral, tube feed and nutritional supplement drinks)</label>
+                        <label class="mt-2" style="font-weight: 600; margin-left: 75px;">Amount Consumed</label>
+                        <div formArrayName="fluidControls">
+                            <div *ngFor="let control of fluidControls.controls; let i = index" [formGroupName]="i">
+                                <div class="row p-2 mr-1">
+                                    <div class="col-9 col-md-8">
+                                        <input type="text" class="form-control" formControlName="fluidItemValue" />
+                                        <!-- <div *ngIf="isSubmitted && control.get('fluidItemValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                    <div class="col-2 col-md-3">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <input type="text" inputmode="numeric" maxlength="5" class="form-control" formControlName="fluidItemConsumedValue" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+                                                <!-- <div *ngIf="isSubmitted && control.get('fluidItemConsumedValue')?.invalid">
+                                                    <small class="text-danger">This field should be numeric.</small>
+                                                </div> -->
+                                            </div>
+                                            <div class="col-2 pl-0 d-flex align-items-center">
+                                                <label class="mb-0" style="font-weight: 600;">ml</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-1 col-md-1">
+                                        <button type="button" class="btn border-0" (click)="removeFluidControl(i)">
+                                            <img style="height: 25px;" src="assets/images/dash.svg">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn border-0" (click)="addFluidControl()">
+                                <img style="height: 25px;" src="assets/images/plus-square.svg">
+                            </button>
+                        </div>
+                        <div class="row p-2">
+                            <div class="col">
+                                <div class="reason-selector">
+                                    <div class="blood-glucose-parent">
+                                        <div class="blood-glucose">
+                                            Passed Urine<!--<sup *ngIf="!appService.AuthoriseAction('eobs_setmonitoring_foodandfluid')" class="text-danger">*</sup>-->
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-selector">
+                                        <select class="form-control dropdown-parent" style="width: 300px;" formControlName="passedUrineValue">
+                                            <option *ngFor="let option of passedUrineDropdownOptions" [value]="option.id">{{ option.name }}</option>
+                                        </select>
+                                        <!-- <div *ngIf="isSubmitted && form.get('passedUrineValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-2">
+                            <div class="col">
+                                <div class="frame-group">
+                                    <div class="blood-glucose-parent">
+                                       <div class="blood-glucose">
+                                         Monitoring Frequency<sup class="text-danger">*</sup>
+                                       </div>
+                                    </div>
+                                    <div class="frame-container">
+                                       <div class="form-group frame-group">
+                                          <div class="radio-button">
+                                             <input class="form-control radio-button-child" type="radio" formControlName="recordReminderOption" id="rdTime" value="Time" (change)="recordReminderChange($event)">
+                                          </div>
+                                          <div class="blood-glucose-prototype">
+                                             <!-- <input type="text" inputmode="numeric" maxlength="5" class="form-control dropdown-parent" style="width: 60px; padding-right: 0px; padding-left: 0px; text-align: center;" formControlName="recordReminderTxtValue" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" /> -->
+                                             <!-- <div *ngIf="isSubmitted && form.get('recordReminderTxtValue')?.invalid">
+                                                 <small class="text-danger">This field is required and should be numeric.</small>
+                                             </div> -->
+                                             <!-- <div *ngIf="show7DaysValidationError">
+                                                <small class="text-danger">Monitoring Frequency cannot be greater than 7 days.</small>
+                                            </div> -->
+                                            <div  id="dropdownFrequencyContainer" class="dropdown-selector" style="width: 125px;">
+                                                <select class="form-control dropdown-parent" formControlName="recordReminderTxtValue">
+                                                    <option *ngFor="let option of monitoringDropdownValues" [value]="option.id">{{ option.name }}</option>
+                                                </select>
+                                                <!-- <select class="form-control dropdown-parent" formControlName="recordReminderTxtValue" *ngIf="form.controls['recordReminderDrpValue'].value == 'hours'">
+                                                    <option *ngFor="let option of hoursDropdownValues" [value]="option.id">{{ option.name }}</option>
+                                                </select>
+                                                <select class="form-control dropdown-parent" formControlName="recordReminderTxtValue" *ngIf="form.controls['recordReminderDrpValue'].value == 'days'">
+                                                    <option *ngFor="let option of daysDropdownValues" [value]="option.id">{{ option.name }}</option>
+                                                </select> -->
+                                            </div>
+                                             <div  id="dropdownSelectorContainer" class="dropdown-selector" style="width: 125px;">
+                                                 <select class="form-control dropdown-parent" formControlName="recordReminderDrpValue" (change)="resetValidation($event, 'form')">
+                                                     <option *ngFor="let option of recordingReminderDropdownOptions" [value]="option.id">{{ option.name }}</option>
+                                                 </select>
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <div class="radio-button1">
+                                          <input class="form-control radio-button-child" type="radio" formControlName="recordReminderOption" id="rdRegularMonitoringNotRequired" value="StopMonitoring" (change)="recordReminderChange($event)">
+                                          <div class="radio-button2">Stop monitoring</div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="reason-selector pt-2">
+                                    <div class="blood-glucose-parent">
+                                        <div class="blood-glucose">
+                                            Reason<sup class="text-danger">*</sup>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-selector">
+                                        <select class="form-control dropdown-parent" style="width: 300px;" formControlName="reasonValue" (change)="reasonChange($event)">
+                                            <option *ngFor="let option of reasonDropdownOptions" [title]="option.name" [value]="option.id">{{ option.name }}</option>
+                                        </select>
+                                        <!-- <div *ngIf="isSubmitted && form.get('reasonValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                 </div>
+                                 <div class="reason-selector pt-2" *ngIf="showOtherReasonTxtbx">
+                                    <div class="blood-glucose-parent">
+                                        <div class="blood-glucose">
+                                        </div>
+                                    </div>
+                                    <div style="width: 240px;">
+                                        <textarea class="form-control" formControlName="reasonOther" rows="4" cols="50" maxlength="250"></textarea>
+                                        <!-- <div *ngIf="isSubmitted && form.get('reasonOther')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                 </div>
+                            </div>
+                            <div class="col pt-2">
+                                <label  style="margin-bottom: 34px; font-weight: 600;">Date</label>
+                                <input type="text" class="form-control" formControlName="observationDateTime" bsDatepicker
+                                    [bsConfig]="{ dateInputFormat: 'DD-MM-YYYY', containerClass: 'theme-default', adaptivePosition: true, showWeekNumbers: false }"
+                                    [minDate]="mindate" [maxDate]="today" />
+                                <!-- <div *ngIf="isSubmitted && form.get('observationDateTime')?.invalid">
+                                    <small class="text-danger">This field is required.</small>
+                                </div> -->
+                            </div>
+                            <div class="col pt-2">
+                                <label style="font-weight: 600;">Observation Time</label>
+                                <timepicker [minuteStep]="1" [showMeridian]="false" [min]="minTime" [max]="maxTime" formControlName="observationDateTime"></timepicker>
+                                <!-- <div *ngIf="isSubmitted && form.get('observationDateTime')?.invalid">
+                                    <small class="text-danger">This field is required.</small>
+                                </div> -->
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row p-2">
+                            <div class="col-1 text-left">
+                                <button type="button" class="btn border-0" (click)="toggleHistory()">
+                                    <img style="height: 25px;" src="assets/images/Table_icon.svg">
+                                </button>
+                            </div>
+                            <div class="col-10 text-right">
+                                <div *ngIf="isSubmitted && fluidControlsHaveInvalidValue()" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Fluid Description</span>
+                                </div>
+                                <div *ngIf="isSubmitted && fluidControlsHaveInvalidConsumedValue()" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please record the amount of fluid consumed</span>
+                                </div>
+                                <div *ngIf="isSubmitted && form.get('recordReminderTxtValue')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Monitoring Frequency</span>
+                                </div>
+                                <div *ngIf="show7DaysValidationError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Monitoring Frequency cannot be greater than 7 days</span>
+                                </div>
+                                <div *ngIf="isSubmitted && form.get('reasonValue')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Monitoring Frequency Reason</span>
+                                </div>
+                                <div *ngIf="isSubmitted && form.get('reasonOther')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Other Reason</span>
+                                </div>
+                                <div *ngIf="isSubmitted && form.get('observationDateTime')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Date and Observation Time</span>
+                                </div>
+                                <div *ngIf="passedUrineError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Observations</span>
+                                </div>
+                            </div>
+                            <div class="col-1 text-right">
+                                <button *ngIf="showSubmitButton && appService.AuthoriseAction('eobs_add_foodandfluid')" type="submit" class="btn border-0">
+                                    <img style="height: 25px;" src="assets/images/Tick Primary.svg">
+                                </button>
+                            </div>
+                            
+                        </div>
+                    </form>
+                    <div *ngIf="showHistory" style="max-height: 300px; overflow-y: auto; width: 100%; overflow-x: auto; white-space: nowrap;">
+                        <app-food-and-fluid-history-viewer (historyViewerOutput)="receiveHistoryData($event)"></app-food-and-fluid-history-viewer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="foodAndFluidSuccessModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="successLabel">Successfully Submitted Food and Fluid Observation</h5>
+                <button type="button" class="close" aria-label="Close" (click)="hideSuccessModal()">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+                    The patient has had <strong>{{ getRunningTotalForDay() }}ml</strong> of fluid in the current 24 hour period (starting on <strong>{{ fluidBalanceStartDate() | date: 'dd/MM/yyyy' }} 0{{appService.startTime}}:00</strong>).
+                    <hr>
+                    Be <strong>Alert</strong> to increased fluid intake needs when not eating or if eating poorly or if obese or if there are fluid losses e.g. vomiting, diarrhoea, pyrexia, sweating, or wound exudate.
+                    <br />
+                    <br />
+                    <strong>NOTE for Adults:</strong>
+                    <br />
+                    1500ml or more; adequate intake.
+                    <br/>
+                    <br />
+                    If 1200ml or more, but less than 1500ml; <strong>Action:</strong> encourage fluid intake to above 1500ml, keep monitoring and inform shift coordinator. 
+                    <br />
+                    <br />
+                    Between 600ml and 1200ml; <strong>Action:</strong> encourage hourly fluids immediately, Inform shift coordinator.
+                    <br />
+                    <br />
+                    If 600ml or less; <strong>Action:</strong> Inform medical staff immediately.
+                    <br />
+                    <br />
+                    <strong>NOTE for Children:</strong>
+                    <br />
+                    For 5 to 6 years old, 1000ml is adequate fluid intake.
+                    <br />
+                    <br /> 
+                    For 7 to 12 years old, 1200ml is adequate fluid intake.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="foodAndFluidDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="deleteLabel">Delete Confirmation</h5>
+                <button type="button" class="close" aria-label="Close" (click)="hideDeleteModal()">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label p-2 font-weight-bold">Are you sure that you want to delete the Food and Fluid record? Please provide reson.
+                    This cannot be undone.</label>
+                    <br>
+                <label class="form-label p-2 font-weight-bold">Reason<sup class="text-danger">*</sup></label>
+                <div class="p-2">
+                    <select class="form-control" (change)="reasonDeleteChange($event)" [(ngModel)]="reasonForDelete">
+                        <option *ngFor="let option of reasonForDeleteDropdownOptions" [value]="option.id">{{ option.name
+                            }}</option>
+                    </select>
+                </div>
+                <div class="p-2" *ngIf="showDeleteReasonOtherTxtbx">
+                    <textarea class="form-control" [(ngModel)]="reasonForDeleteOther" rows="4" cols="50" maxlength="250"></textarea>
+                    <div *ngIf="reasonForDeleteOther == '' || reasonForDeleteOther.trim() == ''">
+                        <small class="text-danger">This field is required.</small>
+                    </div>
+                </div>
+                <div class="row pt-2">
+                    <div class="col-12 text-right pr-4">
+                        <button type="button" class="btn border-0 p-0" (click)="deleteFoodAndFluidRecord(foodfluidobservation_id)" [disabled]="reasonForDelete == 'Other' && (reasonForDeleteOther == '' || reasonForDeleteOther.trim() == '')">
+                            <img style="height: 25px;" src="assets/images/Tick Secondary.svg">
+                        </button> 
+                        &nbsp;&nbsp;&nbsp;
+                        <button type="button" class="btn border-0 p-0" (click)="hideDeleteModal()">
+                            <img style="height: 25px;" src="assets/images/Cross Primary.svg">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editFoodAndFluidModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="editFoodAndFluidLabel">Edit Food and Fluid</h5>
+                <button type="button" class="close" aria-label="Close" (click)="hideEditFormModal()">
+                    <span aria-hidden="true">x</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+                    <label class="pl-2" style="font-weight: 600;">Observation Time {{ observationDateTime | date: 'dd/MM/YYYY HH:mm'}}</label>
+                    <form [formGroup]="editForm" (ngSubmit)="editSubmit()">
+                        <label class="pl-2" style="font-weight: 600;">Food Item</label>
+                        <div formArrayName="editFoodControls">
+                            <div *ngFor="let control of editFoodControls.controls; let i = index" [formGroupName]="i">
+                                <div class="row p-2 mr-1">
+                                    <div class="col-9 col-md-8">
+                                        <input type="text" class="form-control" formControlName="foodItemValue" />
+                                        <!-- <div *ngIf="isEditSubmitted && control.get('foodItemValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                    <div class="col-2 col-md-3">
+                                        <select class="form-control" formControlName="foodItemConsumedValue">
+                                            <option *ngFor="let option of foodItemDropdownOptions" [value]="option.id">
+                                                {{ option.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-1 col-md-1">
+                                        <button type="button" class="btn border-0" (click)="removeEditFoodControl(i)">
+                                            <img style="height: 25px;" src="assets/images/dash.svg">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn border-0" (click)="addEditFoodControl()">
+                                <img style="height: 25px;" src="assets/images/plus-square.svg">
+                            </button>
+                        </div>
+                        <label class="pl-2 mt-2" style="font-weight: 600;">Fluid Description (Oral, tube feed and nutritional supplement drinks)</label>
+                        <label class="mt-2" style="font-weight: 600; margin-left: 70px;">Amount Consumed</label>
+                        <div formArrayName="editFluidControls">
+                            <div *ngFor="let control of editFluidControls.controls; let i = index" [formGroupName]="i">
+                                <div class="row p-2 mr-1">
+                                    <div class="col-9 col-md-8">
+                                        <input type="text" class="form-control" formControlName="fluidItemValue" />
+                                        <!-- <div *ngIf="isEditSubmitted && control.get('fluidItemValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                    <div class="col-2 col-md-3">
+                                        <div class="row">
+                                            <div class="col-9">
+                                                <input type="text" inputmode="numeric" maxlength="5" class="form-control" formControlName="fluidItemConsumedValue" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" />
+                                                <!-- <div *ngIf="isEditSubmitted && control.get('fluidItemConsumedValue')?.invalid">
+                                                    <small class="text-danger">This field should be numeric.</small>
+                                                </div> -->
+                                            </div>
+                                            <div class="col-2 pl-0 d-flex align-items-center">
+                                                <label class="mb-0" style="font-weight: 600;">ml</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-1 col-md-1">
+                                        <button type="button" class="btn border-0" (click)="removeEditFluidControl(i)">
+                                            <img style="height: 25px;" src="assets/images/dash.svg">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button type="button" class="btn border-0" (click)="addEditFluidControl()">
+                                <img style="height: 25px;" src="assets/images/plus-square.svg">
+                            </button>
+                        </div>
+                        <div class="row p-2">
+                            <div class="col">
+                                <div class="reason-selector">
+                                    <div class="edit-blood-glucose-parent">
+                                        <div class="blood-glucose">
+                                            Passed Urine<!--<sup *ngIf="!appService.AuthoriseAction('eobs_setmonitoring_foodandfluid')" class="text-danger">*</sup>-->
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-selector">
+                                        <select class="form-control dropdown-parent" style="width: 300px;" formControlName="passedUrineValue">
+                                            <option *ngFor="let option of passedUrineDropdownOptions" [value]="option.id">{{ option.name }}</option>
+                                        </select>
+                                        <!-- <div *ngIf="isEditSubmitted && editForm.get('passedUrineValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row p-2" *ngIf="showMonitoringFreq">
+                            <div class="col">
+                                <div class="frame-group">
+                                    <div class="edit-blood-glucose-parent">
+                                       <div class="blood-glucose">
+                                         Monitoring Frequency<sup class="text-danger">*</sup>
+                                       </div>
+                                    </div>
+                                    <div class="frame-container">
+                                       <div class="form-group frame-group">
+                                          <div class="radio-button">
+                                             <input class="form-control radio-button-child" type="radio" formControlName="recordReminderOption" id="rdTime" value="Time" (change)="recordEditReminderChange($event)">
+                                          </div>
+                                          <div class="blood-glucose-prototype">
+                                             <!-- <input type="text" inputmode="numeric" maxlength="5" class="form-control dropdown-parent" style="width: 60px; padding-right: 0px; padding-left: 0px; text-align: center;" formControlName="recordReminderTxtValue" onkeypress="return (event.charCode >= 48 && event.charCode <= 57)" /> -->
+                                             <!-- <div *ngIf="isEditSubmitted && editForm.get('recordReminderTxtValue')?.invalid">
+                                                 <small class="text-danger">This field is required and should be numeric.</small>
+                                             </div> -->
+                                             <!-- <div *ngIf="show7DaysValidationError">
+                                                <small class="text-danger">Monitoring Frequency cannot be greater than 7 days.</small>
+                                            </div> -->
+                                            <div  id="dropdownFrequencyContainer" class="dropdown-selector" style="width: 125px;">
+                                                <select class="form-control dropdown-parent" formControlName="recordReminderTxtValue">
+                                                    <option *ngFor="let option of monitoringDropdownValues" [value]="option.id">{{ option.name }}</option>
+                                                </select>
+                                                <!-- <select class="form-control dropdown-parent" formControlName="recordReminderTxtValue" *ngIf="editForm.controls['recordReminderDrpValue'].value == 'hours'">
+                                                    <option *ngFor="let option of hoursDropdownValues" [value]="option.id">{{ option.name }}</option>
+                                                </select>
+                                                <select class="form-control dropdown-parent" formControlName="recordReminderTxtValue" *ngIf="editForm.controls['recordReminderDrpValue'].value == 'days'">
+                                                    <option *ngFor="let option of daysDropdownValues" [value]="option.id">{{ option.name }}</option>
+                                                </select> -->
+                                            </div>
+                                             <div  id="dropdownSelectorContainer" class="dropdown-selector" style="width: 125px">
+                                                 <select class="form-control dropdown-parent" formControlName="recordReminderDrpValue" (change)="resetValidation($event, 'editForm')">
+                                                     <option *ngFor="let option of recordingReminderDropdownOptions" [value]="option.id">{{ option.name }}</option>
+                                                 </select>
+                                             </div>
+                                          </div>
+                                       </div>
+                                       <div class="radio-button1">
+                                          <input class="form-control radio-button-child" type="radio" formControlName="recordReminderOption" id="rdRegularMonitoringNotRequired" value="StopMonitoring" (change)="recordEditReminderChange($event)">
+                                          <div class="radio-button2">Stop monitoring</div>
+                                       </div>
+                                    </div>
+                                 </div>
+                                 <div class="reason-selector pt-2">
+                                    <div class="edit-blood-glucose-parent">
+                                        <div class="blood-glucose">
+                                            Reason<sup class="text-danger">*</sup>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-selector">
+                                        <select class="form-control dropdown-parent" style="width: 300px;" formControlName="reasonValue" (change)="reasonEditChange($event)">
+                                            <option *ngFor="let option of reasonDropdownOptions" [title]="option.name" [value]="option.id">{{ option.name }}</option>
+                                        </select>
+                                        <!-- <div *ngIf="isEditSubmitted && editForm.get('reasonValue')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                 </div>
+                                 <div class="reason-selector pt-2" *ngIf="showEditOtherReasonTxtbx">
+                                    <div class="edit-blood-glucose-parent">
+                                        <div class="blood-glucose">
+                                        </div>
+                                    </div>
+                                    <div style="width: 240px;">
+                                        <textarea class="form-control" formControlName="reasonOther" rows="4" cols="50" maxlength="250"></textarea>
+                                        <!-- <div *ngIf="isEditSubmitted && editForm.get('reasonOther')?.invalid">
+                                            <small class="text-danger">This field is required.</small>
+                                        </div> -->
+                                    </div>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="row pl-2">
+                            <div class="col-2" style="max-width: 20%;">
+                                <div class="edit-blood-glucose-parent">
+                                    <div class="blood-glucose">
+                                        Reason for edit<sup class="text-danger">*</sup>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="radio-button">
+                                    <input class="radio-button-child" type="radio" formControlName="reasonForEdit" id="rdEnteredInError" value="EnteredInError" (change)="reasonForEditChange($event)">
+                                    <div class="radio-button">Entered in error</div>
+                                 </div>
+                                 <div class="radio-button">
+                                    <input class="radio-button-child" type="radio" formControlName="reasonForEdit" id="rdOther" value="Other" (change)="reasonForEditChange($event)">
+                                    <div class="radio-button">Other</div>
+                                 </div>
+                            </div>
+                        </div>
+                        <div class="row p-2" *ngIf="showEditReasonOtherTxtbx">
+                            <div class="col-4">
+                                <textarea class="form-control" formControlName="reasonForEditOther" rows="4" cols="50" maxlength="250"></textarea>
+                                <!-- <div *ngIf="isEditSubmitted && editForm.get('reasonForEditOther')?.invalid">
+                                    <small class="text-danger">This field is required.</small>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="p-2 w-100 text-left" *ngIf="appService.AuthoriseAction('eobs_delete_foodandfluid')">
+                            <img style="height: 25px;" src="assets/images/Delete.svg" (click)="showDeleteModal(foodfluidobservation_id);">
+                        </div>
+                        <hr>
+                        <div class="row p-2">
+                            <div class="col-11 text-right">
+                                <div *ngIf="isEditSubmitted && editFluidControlsHaveInvalidValue()" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Fluid Description</span>
+                                </div>
+                                <div *ngIf="isEditSubmitted && editFluidControlsHaveInvalidConsumedValue()" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please record the amount of fluid consumed</span>
+                                </div>
+                                <div *ngIf="isEditSubmitted && editForm.get('recordReminderTxtValue')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Monitoring Frequency</span>
+                                </div>
+                                <div *ngIf="show7DaysValidationError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Monitoring Frequency cannot be greater than 7 days</span>
+                                </div>
+                                <div *ngIf="isEditSubmitted && editForm.get('reasonValue')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Monitoring Frequency Reason</span>
+                                </div>
+                                <div *ngIf="isEditSubmitted && editForm.get('reasonOther')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Other Reason</span>
+                                </div>
+                                <div *ngIf="isEditSubmitted && editForm.get('observationDateTime')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Date and Observation Time</span>
+                                </div>
+                                <div *ngIf="isEditSubmitted && editForm.get('reasonForEditOther')?.invalid" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Other Reason For Edit</span>
+                                </div>
+                                <div *ngIf="editPassedUrineError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Enter Observations</span>
+                                </div>
+                            </div>
+                            <div class="col-1 text-right">
+                                <button *ngIf="showEditSubmitButton && appService.AuthoriseAction('eobs_add_foodandfluid')" type="submit" class="btn border-0">
+                                    <img style="height: 25px;" src="assets/images/Tick Primary.svg">
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

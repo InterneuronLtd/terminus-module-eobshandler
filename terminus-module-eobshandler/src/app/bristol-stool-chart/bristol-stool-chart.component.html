@@ -1,0 +1,498 @@
+<!--BEGIN LICENSE BLOCK--> 
+<!--Interneuron Terminus
+
+Copyright(C) 2025  Interneuron Limited
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.If not, see<http://www.gnu.org/licenses/>. -->
+<!--END LICENSE BLOCK--> 
+<div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalCenterTitle" style="display: block;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content modal-lg">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Bowel Monitoring using the Bristol Stool Chart
+                     {{currentRecordedFrequencyAndReason}}</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeBristolStoolModal()">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div style="overflow-y: auto;">
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <table>
+                                <tr>
+                                    <th *ngIf="!patientrefused">Stool Type <span style="color:red;" *ngIf="!appService.AuthoriseAction('eobs_set_monitoring_freq_bristol_stool_chart')"> *</span>
+                                        <img src="assets/images/Info.svg" height="22px" width="30px"
+                                            (click)="showStoolTypeModal=true">
+                                    </th>
+                                    <th>
+                                        Date
+                                    </th>
+                                    <th>
+                                        Observation Time
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <th *ngIf="!patientrefused" class="pt-2 pr-2">
+                                        <select class="form-control dropdown-selector p-1"
+                                            [(ngModel)]='bristolstooltype' id="ddlbristolstooltype"
+                                            placeholder="Select">
+                                            <option value="" selected>Please Select</option>
+                                            <option value="Bowels not opened">Bowels not opened</option>
+                                            <option value="Type unknown">Type unknown</option>
+                                            <option value="1">Type 1</option>
+                                            <option value="2">Type 2</option>
+                                            <option value="3">Type 3</option>
+                                            <option value="4">Type 4</option>
+                                            <option value="5">Type 5</option>
+                                            <option value="6">Type 6</option>
+                                            <option value="7">Type 7</option>
+                                        </select>
+                                    </th>
+                                    <th class="pt-2 pr-2">
+                                        <input class="form-control" id="date-of-birth" name="date-of-birth" type="text"
+                                            placeholder="Select Date" bsDatepicker [(ngModel)]="Choosenfilterdate"
+                                            (ngModelChange)="ChoosenfilterdateChange($event)"
+                                            [bsConfig]="{ showWeekNumbers:false,dateInputFormat: 'DD-MM-YYYY', containerClass:'theme-default' }"
+                                            [maxDate]="today" [minDate]="mindate" autocomplete="off">
+                                    </th>
+                                    <th>
+                                        <timepicker [minuteStep]="1" [(ngModel)]="Choosenfilterdate" [min]="minTime"
+                                            [max]="maxTime" [showMeridian]="false">
+                                        </timepicker>
+                                    </th>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row" style="padding-left: 20px; padding-top: 20px;">
+                        <app-monitoring-frequency [observationtype]="observationtype"
+                            [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                            (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+
+                    </div>
+                    <div class="reason-selector">
+                        <div class='blood-glucose-parent'>
+                            <div class="blood-glucose">
+                                <span>Additional Comments</span>
+                            </div>
+                            
+                            <div class="blood-glucose"></div>
+                        </div>
+                        <div class="dropdown-selector" id="dropdownSelectorContainer">
+                            <textarea class="form-control" enterIsNext [(ngModel)]='additionalcomments' rows="5" cols="50" maxlength="900" style="width: 260px; min-height: 95px; max-height: 95px;margin-left: -50px;"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label *ngIf="showpatientrefusedlink" (click)="showpatientrefusedlink=false"
+                            style="color: #007bff;">Patient Refused?</label><br />
+                        <div *ngIf="!showpatientrefusedlink" class="form-check">
+                            <input [(ngModel)]="patientrefused" (ngModelChange)="patientrefusedChange()" type="checkbox"
+                                class="form-check-input" id="chkpatientrefusedbg">
+                            <label class="form-check-label" for="chkpatientrefusedbg">Patient Refused</label>
+                        </div>
+
+                        <div *ngIf="patientrefused">
+                            <br />
+                            <strong class="form-check-label">Reason for Refusal</strong> <span style="color:red;">
+                                *</span>
+                            <textarea class="form-control" row="5" maxlength="800"
+                                [(ngModel)]='reasonforRefusal'></textarea>
+
+
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <img src="assets/images/Table_icon.svg" height="25px" (click)="ShowHistory=!ShowHistory"
+                        role="button" class="ml-1">
+                    <img src="assets/images/Graph_icon.svg" height="25px" class="ml-3" (click)="openCollapseGraph()">
+
+
+                    <img *ngIf="showAddButton && appService.AuthoriseAction('eobs_add_bristol_stool_chart')"
+                        (click)="SaveObservation()" src="assets/images/Tick Primary.svg" height="32px" width="40px"
+                        class="float-right mr-3" role="button">
+                    <div *ngIf="messageSuccess" style="padding: 4px;" class="alert float-right alert-primary mr-3"
+                        role="alert">
+                        Bristol Stool Saved successfully.
+                    </div>
+                    <div *ngIf="patientrefusederror" style="padding: 4px;" class="alert float-right alert-danger"
+                        role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Please Enter Patient Refused Reason.</span>
+                    </div>
+                    <div *ngIf="messageError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Error</span>
+                    </div>
+                    <div *ngIf="showError" style="padding: 4px;" class="alert float-right alert-danger" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Please fill in all the fields that are marked *</span>
+                    </div>
+                    <div *ngIf="showValidate7DayError" style="padding: 4px;" class="alert float-right alert-danger"
+                        role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                            class="text-danger">Monitoring frequency cannot be greater than 7 days</span>
+                    </div>
+                </div>
+                <!-- <div *ngIf="recordedError" class="col" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">Please Select Type.</span>
+                    </div> -->
+
+
+                <!-- <img *ngIf="disabledSubmit" src="assets/images/Tick Primary.svg" height="32px" width="40px"
+                        class="float-right mr-3" role="button"> -->
+
+                <!-- <div class="alert alert-success pt-4" role="alert">
+                        This is a success alert—check it out!
+                        </div> -->
+                <div class="modal-body ">
+
+
+                    <div *ngIf="ShowHistory"
+                        style="max-height: 200px; width: 100%; overflow-y: auto; white-space: nowrap;">
+
+                        <app-history-viewer [monitoringFrequencyHistoryData]="monitoringFrequencyHistoryData"
+                            [rowForHistoryViewer]="rowForHistoryViewer"
+                            (historyViewerOutput)="receivehistoryViewerData($event)"></app-history-viewer>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showEdit" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeledit" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeledit">Bowel Monitoring using the Bristol Stool Chart every
+                    {{currentRecordedFrequencyAndReason}}</h5>
+                <button type="button" class="close" (click)="showEdit=false;showEditValidate7DayError=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tr>
+                        <th style="width:160px;">Observation Time:</th>
+                        <th style="padding: 10px">{{selectedBristolStool.datestarted | date: 'dd/MM/yyyy HH:mm'}}</th>
+
+                    </tr>
+                    <tr *ngIf="!selectedBristolStool.patientrefused">
+                        <th>Stool Type <span style="color:red;" *ngIf="!appService.AuthoriseAction('eobs_set_monitoring_freq_bristol_stool_chart')"> *</span> :</th>
+                        <th style="padding: 10px">
+                            <select class="form-control dropdown-selector p-1"
+                                [(ngModel)]='selectedBristolStool.__bristolstool.value' id="ddlrecordedat"
+                                placeholder="Select">
+                                <option value="" disabled selected>Please Select</option>
+                                <option value="Bowels not opened">Bowels not opened</option>
+                                <option value="Type unknown">Type unknown</option>
+                                <option value="1">Type 1</option>
+                                <option value="2">Type 2</option>
+                                <option value="3">Type 3</option>
+                                <option value="4">Type 4</option>
+                                <option value="5">Type 5</option>
+                                <option value="6">Type 6</option>
+                                <option value="7">Type 7</option>
+                            </select>
+                        </th>
+                    </tr>
+
+                    <tr *ngIf="LatestRecordSelected">
+                        <td colspan="2">
+                            <app-monitoring-frequency [observationtype]="observationtype"
+                                [defaultMonitoringFrequencyData]="defaultMonitoringFrequencyData"
+                                (monitoringFrequencyOutput)="receiveMonitoringFrequencyData($event)"></app-monitoring-frequency>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            <span>Additional Comments</span>
+                        </th>
+                        <td>
+                            <div class="dropdown-selector" id="dropdownSelectorContainer">
+                                <textarea class="form-control" enterIsNext [(ngModel)]='selectedBristolStool.__observationeventmonitoring.monitoringcomments' rows="5" cols="50" maxlength="900" style="width: 260px; min-height: 95px; max-height: 95px;margin-left: 12px;"></textarea>
+                            </div>
+                        </td>
+                    </tr>
+
+                </table>
+                <div *ngIf="!selectedBristolStool.patientrefused">
+                    <br />
+                    <div class="mb-2">
+                        <!-- <input class="form-check-input" type="radio" id="exampleRadios1" name='Reasonedit'
+                            value='Entered in error' [(ngModel)]='selectedBristolStool.reasonforamend' checked> -->
+                        <label class="form-check-label">
+                            <b>Reason for edit:</b>
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" id="exampleRadios1" name='Reasonedit'
+                            value='Entered in error' [(ngModel)]='selectedBristolStool.reasonforamend' checked>
+                        <label class="form-check-label" for="exampleRadios1">
+                            Entered in error
+                        </label>
+                    </div>
+            
+                    <!-- <div class="form-check">
+                            <input class="form-check-input" type="radio" id="exampleRadios2" name='Reasonedit'
+                                value='Recorded for the wrong patient' [(ngModel)]='selectedBristolStool.reasonforamend'>
+                            <label class="form-check-label" for="exampleRadios2">
+                                Recorded for the wrong patient
+                            </label>
+                        </div> <br /> -->
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" id="exampleRadios3" name='Reasonedit' value='Other'
+                            [(ngModel)]='selectedBristolStool.reasonforamend'>
+                        <label class="form-check-label" for="exampleRadios3">
+                            Other
+                        </label>
+                    </div> <br />
+                    <textarea *ngIf="selectedBristolStool.reasonforamend  == 'Other'" class="form-control" row="4"
+                        [(ngModel)]='OthereReason'></textarea>
+                </div>
+                
+
+
+                <div>
+                    <div class="form-check">
+                        <input [(ngModel)]="selectedBristolStool.patientrefused" type="checkbox"
+                            class="form-check-input" id="editchkpatientrefused" (ngModelChange)="patientrefusedChange()">
+                        <label class="form-check-label" for="editchkpatientrefused">Patient Refused</label>
+                    </div>
+
+                    <div *ngIf="selectedBristolStool.patientrefused">
+                        <br />
+                        <strong class="form-check-label">Reason for Refusal</strong> <span style="color:red;">
+                            *</span>
+                        <textarea class="form-control" row="5" maxlength="800"
+                            [(ngModel)]='selectedBristolStool.reasonforpatientrefused'></textarea>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-body">
+                <img *ngIf="appService.AuthoriseAction('eobs_delete_bristol_stool_chart')" class="pull-left"
+                    style="width: 40px ; height: 30px;" (click)="openDeleteModal()"
+                    src="assets/images/Delete.svg">
+                <img *ngIf="appService.AuthoriseAction('eobs_edit_bristol_stool_chart')"
+                    src="assets/images/Tick Primary.svg" height="32px" width="40px" class="float-right mr-3"
+                    (click)="saveEditorDelete('Edit')" role="button">
+                <!-- <div *ngIf="showEditRecordError" class="col" role="alert">
+                        <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span class="text-danger">{{editRecordError}}</span>
+                    </div> -->
+                <div *ngIf="showEditRecordError" style="padding: 4px;" class="alert float-right alert-danger"
+                    role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                        class="text-danger">{{editRecordError}}</span>
+                </div>
+                <div *ngIf="showEditValidate7DayError" style="padding: 4px;" class="alert float-right alert-danger"
+                    role="alert">
+                    <i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i>&nbsp;<span
+                        class="text-danger">Monitoring frequency cannot be greater than 7 days</span>
+                </div>
+                <!-- <img *ngIf="disabledSubmit" src="assets/images/Tick Primary.svg" height="32px" width="40px" class="pull-right mr-3"
+                        role="button"> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div *ngIf="showDelete" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog  modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">Delete Confirmation</h5>
+
+            </div>
+            <div class="modal-body">
+                Are you sure that you want to delete the Bristol Stool? Please provide
+                reason.<br />
+                <b>Reason:</b>
+                <!-- <select  >
+                <option [value]="Entered in error"> Entered in error</option>
+                <option [value]="Recorded for the wrong patient">Recorded for the wrong patient</option>
+            </select> -->
+                <select class="form-control" [(ngModel)]='deleteReason' placeholder="Select"
+                    id="ddlprescriptionindications">
+                    <option value="Entered in error">
+                        Entered in error</option>
+                    <option value="Recorded for the wrong patient">
+                        Recorded for the wrong patient</option>
+                    <!-- <option value="Other">
+                            Other</option> -->
+                </select>
+                <br />
+
+                <!-- <textarea *ngIf="selectedBristolStool.reasonforamend == 'Other'" class="form-control" row="4"
+                        [(ngModel)]='OthereReason'></textarea> -->
+
+            </div>
+            <div class="modal-footer">
+                <img *ngIf="appService.AuthoriseAction('eobs_delete_bristol_stool_chart')"
+                    style="width: 40px ; height: 30px;;" (click)="deleteobservation('Delete')"
+                    src="assets/images/Tick Secondary.svg" class="pull-right mr-3">
+                <img src="assets/images/Cross Primary.svg" (click)="showDelete=false;showEdit=true" height="32px"
+                    width="40px" class="pull-right" role="button">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="showEditHistory" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px;" aria-modal="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content modal-lg">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabeldelete">History</h5>
+                <button type="button" class="close" (click)="showEditHistory=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height: 300px;overflow-y: auto;">
+
+                <table class="table table-borderless">
+
+                    <tr style="background: #F0F4FF;text-align: center;">
+                        <th>Type</th>
+                        <th>Date/Time</th>
+                        <th>Monitoring Frequency</th>
+                        <th>Frequency Reason</th>
+                        <th>Reason for Refusal</th>
+                        <th>Additional Comments</th>
+                        <th>Amended By</th>
+                        <th>Reason for Edit/Delete</th>
+                    </tr>
+                    <tr *ngFor="let Record of RecordHistory">
+
+                        <td style="text-align: center;" *ngIf="!Record.patientrefused">{{Record.type}}</td>
+                        <td style="text-align: center;" *ngIf="Record.patientrefused">Patient Refused</td>
+                        <td style="text-align: center;"> {{Record._createddate | date: 'dd-MM-YYYY HH:mm'}}</td>
+                        <td style="text-align: center;" *ngIf="!Record.isstop">{{Record.frequency_entered}}
+                            {{Record.frequencyunit_entered}}</td>
+                        <td style="text-align: center;" *ngIf="Record.isstop">Monitoring Stopped</td>
+                        <!-- <td style="text-align: center;"  *ngIf="Record.frequency_reason != 'Other'">{{Record.frequency_reason}}</td> -->
+                        <td style="text-align: center;">
+                            {{Record.frequency_reason == 'Other'?Record.frequency_reason_other:Record.frequency_reason}}
+                            <!-- <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                (click)="showReasonAlert(Record.frequency_reason == 'Other'?Record.frequency_reason_other:Record.frequency_reason)">{{Record.frequency_reason == 'Other'?Record.frequency_reason_other:Record.frequency_reason}}</a>
+                            </div> -->
+                        
+                        </td>
+                        <td style="text-align: center;">
+                            <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                    (click)="showReasonAlert(Record.reasonforpatientrefused)">{{Record.patientrefused?Record.reasonforpatientrefused:''}}</a>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">
+                            <div class="tooltip-history">
+
+                                <a href="javascript:void(0)"
+                                    (click)="showReasonAlert(Record.monitoringcomments)">{{Record.monitoringcomments?Record.monitoringcomments:''}}</a>
+                            </div>
+                        </td>
+                        <td style="text-align: center;">{{(Record.isdeleted) ? 'Deleted By ' + Record.deletedby :
+                            (Record.isamended) ? 'Edited By ' + Record.addedby : (Record.addedby) ? 'Created By ' +
+                            Record.addedby : ''}}</td>
+                        <td style="text-align: center;">{{Record.reson}}</td>
+                    </tr>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<!-- <div class="modal fade" id="collapseGraph" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="margin-top: 170px;">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content" >
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Bristol Stool Graph</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div #visualization id="visualization"></div>
+          <div class="mt-3 mb-n2 float-right">
+            <span><i class="mr-3 fa-sharp fa-solid fa-magnifying-glass-minus" style="font-size:38px;"(click)="zoomOut()"></i></span>
+            <span><i class="fa-sharp fa-solid fa-magnifying-glass-plus" style="font-size:38px;"(click)="zoomIn()"></i></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+<div [hidden]="!showStoolTypeModal" class="modal fade show" id="exampleModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabeldelete" style="display: block; padding-right: 17px; margin-top: 250px;"
+    aria-modal="true">
+    <div class="modal-dialog modal-sl" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 9px 17px;">
+                <h5 class="modal-title" id="exampleModalLabel">Bristol Stool Type Chart</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="showStoolTypeModal=false">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img src="assets/images/stool_chart_image.svg" style="width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="Showchart" class="modal fade show" id="Discardis" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabelDiscard" style="display: block; padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog modal-dialog-centered  modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="padding: 10px 13px 7px 17px;">
+                <h5 class="modal-title" id="exampleModalLabelDiscard">Bristol Stool</h5>
+                <button type="button" class="close" (click)="Showchart=false">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" style="overflow-y: auto;">
+                <app-chart [chartData]="monitoringFrequencyHistoryData" [chartConfig]="chartConfig"></app-chart>
+            </div>
+        </div>
+    </div>
+</div>
